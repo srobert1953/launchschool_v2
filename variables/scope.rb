@@ -1,9 +1,10 @@
 # scope.rb
 
-# Scope for blocks:
-# Variable is accessible within the block if declared outside of it. But not accessible outside of the block
+# Variable is accessible within the block '{}, or do/end' if declared outside of it. Variable declared within a block is not accessible outside of it.
 
 # Variable is not accessible within the method if declared outside or vice versa
+
+# Variable declared outside f loop is accessible within the loop and vice versa
 
 # Block scope
 a = 5
