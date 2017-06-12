@@ -1,19 +1,19 @@
 # Practice sheet
 
-hash = {}
+hash = Hash.new
 
-puts "Please enter your name: "
+puts "What is your name?"
 name = gets.chomp
-puts "Please enter your age: "
+puts "What is your age?"
 age = gets.chomp.to_i
-puts "Please enter your city: "
+puts "What city do you live in?"
 city = gets.chomp
-puts "Please enter your country: "
+puts "And which country?"
 country = gets.chomp
 
+hash[:city] = city
 hash[:name] = name
 hash[:age] = age
-hash[:city] = city
 hash[:country] = country
 
-hash.each { |key, value| puts key.to_s.capitalize + ": " + value.to_s }
+hash.each { |key, value| puts "#{key.to_s.capitalize}: #{value}"}
