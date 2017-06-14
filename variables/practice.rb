@@ -1,19 +1,23 @@
 # Practice sheet
 
-hash = Hash.new
+puts "Enter a number:"
+number = gets.chomp.to_i
 
-puts "What is your name?"
-name = gets.chomp
-puts "What is your age?"
-age = gets.chomp.to_i
-puts "What city do you live in?"
-city = gets.chomp
-puts "And which country?"
-country = gets.chomp
+def thousands number
+  if number > 999
+    return number / 1000 % 10
+  else
+    return nil
+  end
+end
 
-hash[:city] = city
-hash[:name] = name
-hash[:age] = age
-hash[:country] = country
+def print_thousands number
+  thousand = thousands number
+  if thousand == nil
+    puts "Your number #{number} doesn't have thousand's place."
+  else
+    puts "The number in thousand's position is #{thousand}"
+  end
+end
 
-hash.each { |key, value| puts "#{key.to_s.capitalize}: #{value}"}
+print_thousands number
