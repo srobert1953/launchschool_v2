@@ -79,8 +79,7 @@ words =  ['demo', 'none', 'tied', 'evil', 'dome', 'mode', 'live',
 
 anagrams = {}
 words.each do |word|
-  placeholder = word.split ""
-  placeholder = placeholder.sort.join
+  placeholder = word.split("").sort.join
 
   if anagrams.has_key? placeholder
     anagrams[placeholder] << word
@@ -89,8 +88,7 @@ words.each do |word|
   end
 end
 
-anagrams = anagrams.values
-anagrams.each { |val| puts "#{val}"}
+anagrams.each_value { |val| puts "#{val}"}
 
 # 7. Given the following code...
 x = "hi there"
