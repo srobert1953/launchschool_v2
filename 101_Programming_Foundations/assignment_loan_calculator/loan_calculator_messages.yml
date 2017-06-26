@@ -1,0 +1,28 @@
+en:
+  welcome: "Welcome to the loan calculator where we calculate your monthly installment."
+  your_name: "To continue, please enter your name: "
+  warning_name: |
+                I am sure your name doesn't contain special characters...
+                What is your name again?
+  warning_amount: |
+                  The entered amount is incorrect.
+                  Please enter only numbers and maximum two decimals:
+  warning_number: |
+                  The entered number is incorrect.
+                  Please enter only numbers and maximum two decimals:
+  warning_years: |
+                  The enetered years are not correct.
+                  Please use whole number no greater than 30:
+  introduction: |
+                To find out your monthly installment, you will enter:
+                 - Desired loan amount
+                 - Desired Annual Percentage Rate (APR)
+                 - Loan duration
+  loan_amount: "Loan amount (in $)"
+  apr: "Interest rate (Eg.: 5, or 5%)"
+  loan_duration: "Installment in years"
+  result: "Your Payment Summary"
+  result_amount: "Loan Amount: "
+  result_apr: "Interest rate: "
+  result_years: "Years: "
+  result_payment: "MONTHLY INSTALLMENT: "

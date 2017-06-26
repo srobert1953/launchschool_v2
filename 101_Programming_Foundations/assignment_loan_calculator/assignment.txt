@@ -1,0 +1,119 @@
+Take everything you've learned so far and build a mortgage calculator (or car payment calculator -- it's the same thing).
+
+You'll need three pieces of information:
+
+the loan amount
+the Annual Percentage Rate (APR)
+the loan duration
+From the above, you'll need to calculate the following two things:
+
+monthly interest rate
+loan duration in months
+You can use the following formula:
+
+m = p * (j / (1 - (1 + j)**(-n)))
+
+m = monthly payment
+p = loan amount
+j = monthly interest rate
+n = loan duration in months
+Finally, don't forget to run your code through Rubocop.
+
+Hints:
+
+Figure out what format your inputs need to be in. For example, should the interest rate be expressed as 5 or .05, if you mean 5% interest?
+If you're working with Annual Percentage Rate (APR), you'll need to convert that to a monthly interest rate.
+Be careful about the loan duration -- are you working with months or years? Choose variable names carefully to assist in remembering.
+
+Example
+Input:
+loan_amount = 100
+apr = 5%
+loan_duration = 1 (years?)
+
+Output:
+monthly_interest = 5 / 12.0 / 100.0 =
+loan_duration_months = 1 * 12
+
+# Formula
+monthly_payment = loan_amount * ( monthly_intetest / ( 1 - (1 + monthly_interest)**(-loan_duration_months)))
+
+# More sense formula:
+total_loan_amount = (1 + ( loan_duration_months * apr / 1200)) * loan_amount
+monthly_payment = total_amount_loan / loan_duration_months
+
+Pseudo:
+calculate monthly payment
+input
+  - desired loan amount
+    - amount includes cents
+  - desired annual percentage rate
+    - collected as percent, allowing 2 decimal, eg.: 3.45%
+  - loan duration in years
+    - only integer allowed
+output
+  - calculate monthly interest rate
+  - calculate loan duration
+  - calculate monthly payment
+
+Phase 1:
+load messages file in yml format
+set language
+Getting input
+Ask user for name
+Ask user for desired loan amount
+  - check that no more than two decimal is entered
+  - check only number is entered
+Ask user for APR
+  - check no more than two decimal is entered
+  - check only number is entered
+  - if % sign entered, deal with it
+Ask user for loan duration in years
+  - check only integer is entered
+
+BEGIN
+GET yml file
+SET language
+GET users name
+
+GET user input for loan amount
+IF input is integer or two decimal float
+  SET loan amount
+
+GET user input for APR
+IF input is integer or two decimal float
+  OR
+  input includes % sign
+  SET APR
+
+GET user input for loan duration
+IF input is integer only
+  SET loan duration
+
+END
+
+Phase 2:
+Calculations
+create a float numbers from loan amount and apr
+create an integer from year
+calculate monthly interest rate
+calculate loan duration in months
+calculate monthly payment
+display result to user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
