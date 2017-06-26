@@ -1,0 +1,14 @@
+en:
+  welcome: "Welcome to the calculator!"
+  first_number: "Please enter the first number:"
+  second_number: "Please enter the second number:"
+  integer_warning: "This doesn't look like an integer..."
+  operator_warning: "Please choose 1, 2, 3, or 4."
+  another_operation: "Do you want to perform another operation? (Y to continue)"
+  operator_prompt: |
+                    Please choose an operation:
+                    1) add,
+                    2) subtract,
+                    3) multiply,
+                    4) divide
+  result: "The result is "
