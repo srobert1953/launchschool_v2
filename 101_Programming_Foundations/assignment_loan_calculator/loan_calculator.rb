@@ -31,7 +31,7 @@ def extract_number(str)
   number.join.to_f
 end
 
-def display_result_messagess(ann, num, sym = '')
+def display_result_messages(ann, num, sym = '')
   width_third = WIDTH / 3
   width_two_thirds = (WIDTH / 3) * 2
   msg_start = MESSAGES[LANG][ann].ljust(width_two_thirds, '.')
