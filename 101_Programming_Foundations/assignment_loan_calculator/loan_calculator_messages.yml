@@ -21,7 +21,7 @@ en:
   loan_amount: "Loan amount (in $)"
   apr: "Interest rate (Eg.: 5, or 5%)"
   loan_duration: "Installment in years"
-  result: "Your Payment Summary"
+  result: "Your Monthly Installment Summary"
   result_amount: "Loan Amount: "
   result_apr: "Interest rate: "
   result_years: "Years: "
