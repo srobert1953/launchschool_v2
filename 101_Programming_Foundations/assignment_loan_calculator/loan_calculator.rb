@@ -31,7 +31,7 @@ def extract_number(str)
   number.join.to_f
 end
 
-def display_result_message(ann, num, sym = '')
+def display_result_messagess(ann, num, sym = '')
   width_third = WIDTH / 3
   width_two_thirds = (WIDTH / 3) * 2
   msg_start = MESSAGES[LANG][ann].ljust(width_two_thirds, '.')
@@ -95,8 +95,8 @@ monthly_installment = loan_amount * partial_calc
 
 puts ""
 puts " #{name}, #{MESSAGES[LANG]['result']} ".center(WIDTH, '-')
-display_result_message('result_amount', loan_amount, '$')
-display_result_message('result_apr', apr, '%')
-display_result_message('result_years', duration_years)
-display_result_message('result_payment', monthly_installment, '$')
+display_result_messages('result_amount', loan_amount, '$')
+display_result_messages('result_apr', apr, '%')
+display_result_messages('result_years', duration_years)
+display_result_messages('result_payment', monthly_installment, '$')
 puts ""
