@@ -38,7 +38,7 @@ loan_duration_months = 1 * 12
 # Formula
 monthly_payment = loan_amount * ( monthly_intetest / ( 1 - (1 + monthly_interest)**(-loan_duration_months)))
 
-# More sense formula:
+# More sense formula for later try
 total_loan_amount = (1 + ( loan_duration_months * apr / 1200)) * loan_amount
 monthly_payment = total_amount_loan / loan_duration_months
 

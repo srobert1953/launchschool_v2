@@ -26,7 +26,6 @@ def get_number(turn)
   loop do
     prompt MESSAGES[LANGUAGE][turn]
     number = gets.chomp
-
     break if valid_number? number
     prompt MESSAGES[LANGUAGE]['integer_warning']
   end
@@ -49,11 +48,8 @@ prompt MESSAGES[LANGUAGE]['welcome']
 
 loop do # main loop
   number1 = get_number "first_number"
-
   number2 = get_number "second_number"
-
   operation = operand
-
   result = case operation
            when '1' then number1.to_i + number2.to_i
            when '2' then number1.to_i - number2.to_i
@@ -63,7 +59,7 @@ loop do # main loop
 
   prompt MESSAGES[LANGUAGE]['result'] + result.to_s
 
-  prompt(MESSAGES[LANGUAGE]['another_operation'])
+  prompt MESSAGES[LANGUAGE]['another_operation']
   answer = gets.chomp
   break unless answer.downcase.start_with? 'y'
 end # end main loop
