@@ -1,0 +1,20 @@
+en:
+  welcome: |
+            This is Rock, Paper, Scissors, Lizard, Spock game!
+            5 rounds are ready to begin!
+
+  input_warning: |
+                Incorrect input, please choose:
+                'r' or 'rock'
+                'p' or 'paper'
+                'sc' or 'scisors'
+                'l' or 'lizard'
+                'sp' or 'spock'
+  continue_warning: "Was it yes, or no?"
+  rounds: "ROUND"
+  user_win: "You Won, congratulations!"
+  computer_win: "Computer won, :("
+  tie: "It's a tie"
+  grand_winner: "The ground winner is:"
+  continue: "Do you want to play again? ('yes' to continue, 'no' to quit)"
+  good_bye: "Thank you for playing!"
