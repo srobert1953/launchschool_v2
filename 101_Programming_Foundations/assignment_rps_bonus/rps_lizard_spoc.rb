@@ -65,7 +65,7 @@ end
 
 def grand_winner(score)
   if score[:user] > score[:computer]
-    'USER'
+    'YOU'
   else
     'COMPUTER'
   end
