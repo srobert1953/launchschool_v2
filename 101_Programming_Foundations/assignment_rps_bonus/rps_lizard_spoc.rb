@@ -77,7 +77,7 @@ loop do # main loop
   round = 0
   score_card = { user: 0, computer: 0 }
 
-  while round < 5
+  loop do
     puts ""
     prompt MESSAGES[LANG]['rounds'] + " #{round + 1}."
     choice = ''
@@ -98,6 +98,7 @@ loop do # main loop
 
     round += 1
     update_score score_card, winner
+    break if score_card.values.any? { |val| val == 5 }
   end
 
   width = 60

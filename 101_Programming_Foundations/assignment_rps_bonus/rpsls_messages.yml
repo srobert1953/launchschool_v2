@@ -1,7 +1,7 @@
 en:
   welcome: |
             This is Rock, Paper, Scissors, Lizard, Spock game!
-            5 rounds are ready to begin!
+            Your rounds are ready, begin!
 
   input_warning: |
                 Incorrect input, please choose:
