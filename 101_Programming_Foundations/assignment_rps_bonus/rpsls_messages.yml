@@ -10,10 +10,11 @@ en:
                 'sc' or 'scisors'
                 'l' or 'lizard'
                 'sp' or 'spock'
+  short_input_warning: Wrong choise again...
   continue_warning: "Was it yes, or no?"
   rounds: "ROUND"
-  user_win: "You Won, congratulations!"
-  computer_win: "Computer won, :("
+  user_win: "You won!"
+  computer_win: "Computer won!"
   tie: "It's a tie"
   grand_winner: "The ground winner is:"
   continue: "Do you want to play again? ('yes' to continue, 'no' to quit)"
