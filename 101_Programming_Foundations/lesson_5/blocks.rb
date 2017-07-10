@@ -172,3 +172,85 @@ end
 # =>  Side effect: none
 # =>  Return value: true or false, if both objects are equal
 # =>  Used return value? Yes, determines return value of inner block
+
+[[[1, 2], [3, 4]], [5, 6]].map do |arr|
+  arr.map do |el|
+    if el.to_s.size == 1    # it's an integer
+      el + 1
+    else                    # it's an array
+      el.map do |n|
+        n + 1
+      end
+    end
+  end
+end
+
+# => Line 176:
+# =>  Action: method call #map
+# =>  Object: nested array
+# =>  Side effect: none
+# =>  Return value: [[[2, 3], [4, 5]], [6, 7]]
+# =>  Used return value?: No
+# => Line 176-186:
+# =>  Action: block execution
+# =>  Object: Each inner array
+# =>  Side effect: none
+# =>  Return value: an inner array, or an integer
+# =>  Used return value?: Yes, determines the #map return value
+# => Line 177:
+# =>  Action: method call #map
+# =>  Object: each inner array
+# =>  Side effect: none
+# =>  Return value: each integer object of inner array raised by one
+# =>  Used return value?: Yes, determines the return value of outer block
+# => Line 177-185:
+# =>  Action: block execution
+# =>  Object: each inner array
+# =>  Side effect: none
+# =>  return value: each integer object of inner arrays raised by one
+# =>  Used return value?: yes, determines the return value of inner block
+# => Line 178:
+# =>  Action: method call #to_s
+# =>  Object: each inner array object
+# =>  Side effect: none
+# =>  Return value: string representation of inner array objects
+# =>  Used return value?: Yes, used for method call #size
+# => Line 178:
+# =>  Action: method call #size
+# =>  Object: each string representation of inner arrays
+# =>  side effect: none
+# =>  Return value: an integer representing a count of characters
+# =>  Used return value?: Yes, for comparison
+# => Line 178-184:
+# =>  Action: conditional statement if
+# =>  Object: integer representing a count of characters
+# =>  Side effect: none
+# =>  Return value: integer of each inner array raised by one
+# =>  Used return value?: Yes, determines the inner block return value
+# => Line 179:
+# =>  Action: raising integer of each inner array object by one
+# =>  Object: n/a
+# =>  Side effect: none
+# =>  Return value: integer raised by one
+# =>  Used return value?: Yes, determines a return value of if conditional
+# => Line 180:
+# =>  Conditional else
+# => Line 181:
+# =>  Action: method call #map
+# =>  Object: each nested inner array object
+# =>  Side effect: none
+# =>  Return value: an integer
+# =>  Used return value?: Yes, determines a return value of if conditional
+# => Line 181-183:
+# =>  Action: block execution
+# =>  Object: an object of nested inter array
+# =>  Side effect: none
+# =>  Return value: an integer raised by one of nested inner array
+# =>  Used return value?: Yes, determines a return value of #map method call
+# => Line 182
+# =>  Action: raising integer of each nested inner array object by one
+# =>  Object: n/a
+# =>  Side effect: none
+# =>  Return value: an integer
+# =>  Used return value?: Yes, determines return value of nested inner block
+
