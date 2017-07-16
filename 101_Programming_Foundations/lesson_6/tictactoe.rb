@@ -1,7 +1,5 @@
 # tictactoe.rb
 
-require 'pry'
-
 INITIAL_SELECTION = ' '
 USER_SELECTION = 'X'
 COMPUTER_SELECTION = 'O'
@@ -14,6 +12,17 @@ GRID_WIDTH = 17
 
 def prompt(msg)
   puts "=> #{msg}"
+end
+
+def welcome_message
+  system 'clear'
+  prompt "Welcome to game Tic Tac Toe."
+  prompt "You win when you place 3 'X's in any row, column, or diagonal."
+  prompt "To start the game, choose first player: player, computer"
+  prompt "You can choose first player after each tie"
+  prompt "Try to win 5 times to become a grand winner"
+  prompt "Press anything to continue"
+  gets
 end
 
 def display_board(brd)
@@ -77,24 +86,36 @@ def win_places(brd, wining, loosing)
   wining_places.reject { |pos| pos.nil? || brd[pos[0]] == loosing }
 end
 
-def computer_places_piece!(brd)
+def strategic_positions(brd)
   defend_places = win_places(brd, USER_SELECTION, COMPUTER_SELECTION).flatten
   wining_places = win_places(brd, COMPUTER_SELECTION, USER_SELECTION).flatten
+  [defend_places, wining_places]
+end
+
+def defensive_play(brd, places)
+  case places.count
+  when 0
+    if brd[5] == INITIAL_SELECTION
+      brd[5] = COMPUTER_SELECTION
+    else
+      selection = available_choice(brd).sample
+      brd[selection] = COMPUTER_SELECTION
+    end
+  when 1
+    brd[places.first] = COMPUTER_SELECTION
+  else
+    brd[places.sample] = COMPUTER_SELECTION
+  end
+end
+
+def computer_places_piece!(brd)
+  defend_places, wining_places = strategic_positions(brd)
+
+  puts "Computer is making move"
+  sleep rand(1..2)
 
   if wining_places.empty?
-    case defend_places.count
-    when 0
-      selection = available_choice(brd).sample
-      if brd[5] == INITIAL_SELECTION
-        brd[5] = COMPUTER_SELECTION
-      else
-        brd[selection] = COMPUTER_SELECTION
-      end
-    when 1
-      brd[defend_places.first] = COMPUTER_SELECTION
-    else
-      brd[defend_places.sample] = COMPUTER_SELECTION
-    end
+    defensive_play(brd, defend_places)
   else
     brd[wining_places.first] = COMPUTER_SELECTION
   end
@@ -111,9 +132,9 @@ end
 def winner(brd)
   WINNING_LINES.each do |line|
     if line.all? { |val| brd[val] == USER_SELECTION }
-      return "Player"
+      return :player
     elsif line.all? { |val| brd[val] == COMPUTER_SELECTION }
-      return "Computer"
+      return :computer
     end
   end
   nil
@@ -125,6 +146,7 @@ def play_again?
     prompt "Do you want to play again?"
     answer = gets.chomp.downcase
     answers = ["yes", "no"]
+    next if answer == ""
     break if answers.any? { |opt| opt.start_with? answer }
     prompt "Is it 'yes', or 'no'?"
   end
@@ -135,53 +157,91 @@ def display_score(scr)
   puts "Score".center(GRID_WIDTH)
   puts "Player:   #{scr[:player]}"
   puts "Computer: #{scr[:computer]}"
-  winner, looser = scr.partition { |_, score| score == 5 }
-  puts "#{winner[0][0].capitalize} has won 5 times!" unless winner.empty?
+  puts ""
+end
+
+def display_grand_winner(scr)
+  winner, _looser = scr.partition { |_, score| score == 5 }
+  puts "#{winner[0][0].capitalize} has won #{winner[0][1]} times!" unless winner.empty?
 end
 
 def update_score!(brd, score)
   winner = winner(brd)
-  if winner == "Player"
+  if winner == :player
     score[:player] += 1
-  elsif winner == "Computer"
+  elsif winner == :computer
     score[:computer] += 1
   end
 end
 
-# def place_piece(brd, user)
-#   if user == 'Computer'
-#   end
-# end
+def place_piece(brd, current)
+  if current == :computer
+    computer_places_piece!(brd)
+  elsif current == :player
+    user_places_piece!(brd)
+  end
+end
+
+def choose_first_player
+  player = ''
+  system "clear"
+  loop do
+    prompt "Who goes first? (player, computer)"
+    player = gets.chomp
+    answers = ['player', 'computer']
+    break if answers.any? { |choice| choice == player }
+    prompt "Type 'player' so you go first, or 'computer'"
+  end
+  player.to_s
+end
+
+def choose_player(choice)
+  case choice
+  when :choose then choose_first_player
+  when :player then :player
+  when :computer then :computer
+  end
+end
+
+def alternate_player(player)
+  player == :player ? :computer : :player
+end
 
 score = {
   player: 0,
   computer: 0
 }
 
+game_count = 0
+first_player = :choose
+
 loop do
+  welcome_message if game_count == 0
+  goes_first = choose_player(first_player)
   board = initiate_board
 
   loop do
     display_board(board)
     display_score(score)
 
-    user_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-
-    computer_places_piece!(board)
+    place_piece(board, goes_first)
+    goes_first = alternate_player(goes_first)
     break if someone_won?(board) || board_full?(board)
   end
 
   display_board(board)
   if someone_won?(board)
     update_score!(board, score)
-    prompt "#{winner(board)} won!"
+    prompt "#{winner(board).capitalize} won!"
+    first_player = winner(board)
   else
     prompt "It's a tie"
+    first_player = :choose
   end
 
   display_score(score)
-
+  display_grand_winner(score)
+  game_count += 1
   break unless play_again?
 end
 
