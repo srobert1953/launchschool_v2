@@ -194,7 +194,7 @@ def choose_first_player
     break if answers.any? { |choice| choice == player }
     prompt "Type 'player' so you go first, or 'computer'"
   end
-  player.to_s
+  :"#{player}"
 end
 
 def choose_player(choice)
