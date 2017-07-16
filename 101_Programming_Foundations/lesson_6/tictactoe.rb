@@ -25,6 +25,7 @@ def welcome_message
   gets
 end
 
+# rubocop:disable Metrics/AbcSize
 def display_board(brd)
   system "clear"
   puts ""
@@ -41,6 +42,7 @@ def display_board(brd)
   puts "     |     |"
   puts ""
 end
+# rubocop:enable Metrics/AbcSize
 
 def initiate_board
   new_board = {}
@@ -162,7 +164,7 @@ end
 
 def display_grand_winner(scr)
   winner, _looser = scr.partition { |_, score| score == 5 }
-  puts "#{winner[0][0].capitalize} has won #{winner[0][1]} times!" unless winner.empty?
+  puts "#{winner[0][0].capitalize} has won 5 times!" unless winner.empty?
 end
 
 def update_score!(brd, score)
