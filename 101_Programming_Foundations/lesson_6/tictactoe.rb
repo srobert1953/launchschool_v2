@@ -1,8 +1,9 @@
 # tictactoe.rb
 
-INITIAL_SELECTION = ' '
+EMPTY_SPACE = ' '
 USER_SELECTION = 'X'
 COMPUTER_SELECTION = 'O'
+GRAND_WINS = 5
 
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
@@ -19,9 +20,9 @@ def welcome_message
   prompt "Welcome to game Tic Tac Toe."
   prompt "You win when you place 3 'X's in any row, column, or diagonal."
   prompt "To start the game, choose first player: player, computer"
-  prompt "You can choose first player after each tie"
+  prompt "Whoever wins goes first next until a tie. Then choose first player."
   prompt "Try to win 5 times to become a grand winner"
-  prompt "Press anything to continue"
+  prompt "Press enter to continue"
   gets
 end
 
@@ -46,12 +47,12 @@ end
 
 def initiate_board
   new_board = {}
-  (1..9).each { |num| new_board[num] = INITIAL_SELECTION }
+  (1..9).each { |num| new_board[num] = EMPTY_SPACE }
   new_board
 end
 
 def available_choice(brd)
-  brd.keys.select { |num| brd[num] == INITIAL_SELECTION }
+  brd.keys.select { |num| brd[num] == EMPTY_SPACE }
 end
 
 def joinor(brd, separator = ',', connector = 'or')
@@ -78,26 +79,26 @@ def user_places_piece!(brd)
   brd[selection] = USER_SELECTION
 end
 
-def win_places(brd, wining, loosing)
-  wining_places = WINNING_LINES.map do |line|
+def win_places(brd, winning, losing)
+  winning_places = WINNING_LINES.map do |line|
     danger = line.reject do |position|
-      brd[position] == wining
+      brd[position] == winning
     end
     danger.size == 1 ? danger : nil
   end
-  wining_places.reject { |pos| pos.nil? || brd[pos[0]] == loosing }
+  winning_places.reject { |pos| pos.nil? || brd[pos[0]] == losing }
 end
 
 def strategic_positions(brd)
   defend_places = win_places(brd, USER_SELECTION, COMPUTER_SELECTION).flatten
-  wining_places = win_places(brd, COMPUTER_SELECTION, USER_SELECTION).flatten
-  [defend_places, wining_places]
+  winning_places = win_places(brd, COMPUTER_SELECTION, USER_SELECTION).flatten
+  [defend_places, winning_places]
 end
 
 def defensive_play(brd, places)
   case places.count
   when 0
-    if brd[5] == INITIAL_SELECTION
+    if brd[5] == EMPTY_SPACE
       brd[5] = COMPUTER_SELECTION
     else
       selection = available_choice(brd).sample
@@ -111,15 +112,15 @@ def defensive_play(brd, places)
 end
 
 def computer_places_piece!(brd)
-  defend_places, wining_places = strategic_positions(brd)
+  defend_places, winning_places = strategic_positions(brd)
 
   puts "Computer is making move"
   sleep rand(1..2)
 
-  if wining_places.empty?
+  if winning_places.empty?
     defensive_play(brd, defend_places)
   else
-    brd[wining_places.first] = COMPUTER_SELECTION
+    brd[winning_places.first] = COMPUTER_SELECTION
   end
 end
 
@@ -147,24 +148,33 @@ def play_again?
   loop do
     prompt "Do you want to play again?"
     answer = gets.chomp.downcase
-    answers = ["yes", "no"]
+    acceptable_answers = ["yes", "no"]
     next if answer == ""
-    break if answers.any? { |opt| opt.start_with? answer }
+    break if acceptable_answers.any? { |opt| opt.start_with? answer }
     prompt "Is it 'yes', or 'no'?"
   end
   answer.start_with? 'y'
 end
 
-def display_score(scr)
+def display_score(score)
   puts "Score".center(GRID_WIDTH)
-  puts "Player:   #{scr[:player]}"
-  puts "Computer: #{scr[:computer]}"
+  puts "Player:   #{score[:player]}"
+  puts "Computer: #{score[:computer]}"
   puts ""
 end
 
-def display_grand_winner(scr)
-  winner, _looser = scr.partition { |_, score| score == 5 }
-  puts "#{winner[0][0].capitalize} has won 5 times!" unless winner.empty?
+def grand_winner?(score)
+  score.any? { |_, value| value == GRAND_WINS }
+end
+
+def display_grand_winner(score)
+  winner = score.select { |_, value| value == GRAND_WINS }
+  puts "#{winner.keys[0].capitalize} has won #{GRAND_WINS} times! And is a grand winner!"
+end
+
+def reset_score!(score)
+  score[:player] = 0
+  score[:computer] = 0
 end
 
 def update_score!(brd, score)
@@ -176,7 +186,7 @@ def update_score!(brd, score)
   end
 end
 
-def place_piece(brd, current)
+def place_piece!(brd, current)
   if current == :computer
     computer_places_piece!(brd)
   elsif current == :player
@@ -189,9 +199,9 @@ def choose_first_player
   system "clear"
   loop do
     prompt "Who goes first? (player, computer)"
-    player = gets.chomp
-    answers = ['player', 'computer']
-    break if answers.any? { |choice| choice == player }
+    player = gets.chomp.downcase
+    acceptable_answers = ['player', 'computer']
+    break if acceptable_answers.any? { |choice| choice == player }
     prompt "Type 'player' so you go first, or 'computer'"
   end
   :"#{player}"
@@ -226,7 +236,7 @@ loop do
     display_board(board)
     display_score(score)
 
-    place_piece(board, goes_first)
+    place_piece!(board, goes_first)
     goes_first = alternate_player(goes_first)
     break if someone_won?(board) || board_full?(board)
   end
@@ -242,7 +252,8 @@ loop do
   end
 
   display_score(score)
-  display_grand_winner(score)
+  display_grand_winner(score) if grand_winner?(score)
+  reset_score!(score) if grand_winner?(score)
   game_count += 1
   break unless play_again?
 end
