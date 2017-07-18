@@ -1,10 +1,13 @@
 # twentyone.rb
 
+require 'pry'
+
 SPADES    = '♠'
 HEARTS    = '♥'
 DIAMONDS  = '♦'
 CLUBS     = '♣'
 ACE       = 'A'
+ACES      = [1, 11]
 SUITS = [SPADES, HEARTS, DIAMONDS, CLUBS]
 VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, "Jack", "Queen", "King", ACE]
 FACE_CARDS = ["Jack", "Queen", "King"]
@@ -24,7 +27,7 @@ def welcome
   puts "If you go over 21, it's a 'bust' and you lose."
   puts ""
   puts "Card values:"
-  puts "Jack, Queen, and King is value of 10."
+  puts "Jack, Queen, and King has value of 10."
   puts "Ace can be 1 or 11, to get you closer to 21"
   puts ""
   prompt "Press enter to continue"
@@ -48,7 +51,7 @@ def deal_cards(deck, player, dealer)
 end
 
 def see_card(card)
-  "#{card[0]}#{card[1]}"
+  "[#{card[0]} #{card[1]}]"
 end
 
 def display_multiple_cards(cards)
@@ -88,25 +91,25 @@ def cards_values(cards)
     elsif FACE_CARDS.include? card[0]
       10
     elsif card[0] == ACE
-      11
+      ACES[1]
     end
   end
 end
 
 def cards_value(cards)
   values = cards_values(cards)
-  aces, rest = values.partition { |val| val == 11 }
+  aces, rest = values.partition { |val| val == ACES[1] }
   if aces.empty?
     rest.inject(:+)
   else
     rest_sum = rest.inject(:+)
-    aces.size.times { rest_sum > 10 ? rest_sum += 1 : rest_sum += 11 }
+    aces.size.times { rest_sum += rest_sum > 10 ? ACES[0] : ACES[1] }
     rest_sum
   end
 end
 
-def busted?(cards)
-  cards_value(cards) > WINNING_VALUE
+def busted?(cards_sum)
+  cards_sum > WINNING_VALUE
 end
 
 def player_stay?
@@ -123,42 +126,39 @@ or (s)tay to keep your cards."
   answer.start_with? 's'
 end
 
-def dealer_stay?(cards)
-  cards_value(cards) >= DEALER_MINIMUM_VALUE
+def dealer_stay?(cards_sum)
+  cards_sum >= DEALER_MINIMUM_VALUE
 end
 
-def winner(dealer, player)
-  dealer_total = cards_value(dealer)
-  player_total = cards_value(player)
-
-  if busted?(player)
+def winner(dealer_value, player_value)
+  if busted?(player_value)
     :player_busted
-  elsif busted?(dealer)
+  elsif busted?(dealer_value)
     :dealer_busted
-  elsif player_total > dealer_total
+  elsif player_value > dealer_value
     :player
-  elsif dealer_total > player_total
+  elsif dealer_value > player_value
     :dealer
   else
     :tie
   end
 end
 
-def display_winner(dealer, player)
-  case winner(dealer, player)
+def display_winner(dealer_value, player_value)
+  case winner(dealer_value, player_value)
   when :player_busted
-    puts "You busted (#{cards_value(player)})! \
-Dealer won (#{cards_value(dealer)})!"
+    puts "You busted (#{player_value})! \
+Dealer won (#{dealer_value})!"
   when :dealer_busted
-    puts "Dealer busted (#{cards_value(dealer)})! \
-You won (#{cards_value(player)})!"
+    puts "Dealer busted (#{dealer_value})! \
+You won (#{player_value})!"
   when :player
-    puts "You won (#{cards_value(player)})! Congratulations!"
+    puts "You won (#{player_value})! Congratulations!"
   when :dealer
-    puts "Dealer won (#{cards_value(dealer)})!"
+    puts "Dealer won (#{dealer_value})!"
   when :tie
-    puts "It's a tie! Dealer: #{cards_value(dealer)}; \
-Player: #{cards_value(player)}"
+    puts "It's a tie! Dealer: #{dealer_value}; \
+Player: #{player_value}"
   end
 end
 
@@ -187,26 +187,30 @@ loop do # main loop
 
   show_cards(dealer, player)
 
+  player_value = cards_value(player)
+  dealer_value = cards_value(dealer)
   loop do
-    break if busted?(player) || player_stay?
+    player_value = cards_value(player)
+    break if busted?(player_value) || player_stay?
     player << give_card!(shuffled_deck)
     show_cards(dealer, player)
   end
 
-  if busted?(player)
+  if busted?(player_value)
     show_cards(dealer, player, false)
-    display_winner(dealer, player)
+    display_winner(dealer_value, player_value)
     play_again? ? next : break
   else
     loop do
-      break if busted?(dealer) || dealer_stay?(dealer)
+      dealer_value = cards_value(dealer)
+      break if busted?(dealer_value) || dealer_stay?(dealer_value)
       dealer << give_card!(shuffled_deck)
       show_cards(dealer, player, false)
     end
   end
 
   show_cards(dealer, player, false)
-  display_winner(dealer, player)
+  display_winner(dealer_value, player_value)
 
   break unless play_again?
 end
