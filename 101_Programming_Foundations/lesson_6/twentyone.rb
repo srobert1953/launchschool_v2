@@ -117,7 +117,8 @@ def player_stay?
     answer = gets.chomp.downcase
     possible_answers = ['hit', 'stay']
     break if possible_answers.any? { |ans| ans.start_with? answer }
-    prompt "Type (h)it, or enter to get another card, or (s)tay to keep your cards."
+    prompt "Type (h)it, or enter to get another card, \
+or (s)tay to keep your cards."
   end
   answer.start_with? 's'
 end
@@ -127,18 +128,37 @@ def dealer_stay?(cards)
 end
 
 def winner(dealer, player)
-  dealer_value = cards_value(dealer)
-  player_value = cards_value(player)
+  dealer_total = cards_value(dealer)
+  player_total = cards_value(player)
 
-  return nil if busted?(dealer) &&
-                busted?(player)
+  if busted?(player)
+    :player_busted
+  elsif busted?(dealer)
+    :dealer_busted
+  elsif player_total > dealer_total
+    :player
+  elsif dealer_total > player_total
+    :dealer
+  else
+    :tie
+  end
+end
 
-  if busted?(dealer) ||
-     dealer_value < player_value
-    'player'
-  elsif busted?(player) ||
-        player_value < dealer_value
-    'dealer'
+def display_winner(dealer, player)
+  case winner(dealer, player)
+  when :player_busted
+    puts "You busted (#{cards_value(player)})! \
+Dealer won (#{cards_value(dealer)})!"
+  when :dealer_busted
+    puts "Dealer busted (#{cards_value(dealer)})! \
+You won (#{cards_value(player)})!"
+  when :player
+    puts "You won (#{cards_value(player)})! Congratulations!"
+  when :dealer
+    puts "Dealer won (#{cards_value(dealer)})!"
+  when :tie
+    puts "It's a tie! Dealer: #{cards_value(dealer)}; \
+Player: #{cards_value(player)}"
   end
 end
 
@@ -175,9 +195,8 @@ loop do # main loop
 
   if busted?(player)
     show_cards(dealer, player, false)
-    puts "You are busted (#{cards_value(player)}), Dealer won (#{cards_value(dealer)})!"
-    next if play_again?
-    break
+    display_winner(dealer, player)
+    play_again? ? next : break
   else
     loop do
       break if busted?(dealer) || dealer_stay?(dealer)
@@ -187,14 +206,7 @@ loop do # main loop
   end
 
   show_cards(dealer, player, false)
-  case winner(dealer, player)
-  when 'player'
-    puts "You won with cards count of #{cards_value(player)}! Congratulations!"
-  when 'dealer'
-    puts "Dealer won with cards count of #{cards_value(dealer)}!"
-  else
-    puts "It's a tie! Dealer: #{cards_value(dealer)}; Player: #{cards_value(player)}"
-  end
+  display_winner(dealer, player)
 
   break unless play_again?
 end
