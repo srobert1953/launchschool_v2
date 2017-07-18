@@ -54,22 +54,15 @@ def see_card(card)
   "[#{card[0]} #{card[1]}]"
 end
 
-def display_multiple_cards(cards)
-  display = ''
-  cards.each_with_index do |card, idx|
-    display << see_card(card)
-    display << ', ' unless cards.size - 1 == idx
-    display << 'and ' if cards.size - 2 == idx
-  end
-  display
-end
-
-def display_cards(cards)
+def display_cards(cards, separator = ',', connector = 'and')
   case cards.size
   when 0 then ""
   when 1 then see_card(cards[0])
-  when 2 then see_card(cards[0]) + " and " + see_card(cards[1])
-  else display_multiple_cards(cards)
+  when 2 then see_card(cards[0]) + " #{connector} " + see_card(cards[1])
+  else
+    active_cards = cards.map { |card| see_card card }
+    active_cards[-1] = "#{connector} #{active_cards.last}"
+    active_cards.join("#{separator} ")
   end
 end
 
