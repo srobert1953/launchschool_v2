@@ -66,15 +66,30 @@ def display_cards(cards, separator = ',', connector = 'and')
   end
 end
 
-def show_cards(dealer, player, hidden = true)
+def show_dealer_hand_with_unkown(cards)
+  puts "Dealer has: #{see_card(cards[0])} and an unknown card"
+end
+
+def show_dealer_hand_all(cards)
+  puts "Dealer has: #{display_cards(cards)}"
+end
+
+def show_player_hand(cards)
+  puts "You have: #{display_cards(cards)}"
+end
+
+def show_cards(dealer, player)
   system "clear"
   puts ""
-  if hidden
-    puts "Dealer has: #{see_card(dealer[0])} and an unknown card"
-  else
-    puts "Dealer has: #{display_cards(dealer)}"
-  end
-  puts "You have: #{display_cards(player)}"
+  show_dealer_hand_with_unkown(dealer)
+  show_player_hand(player)
+end
+
+def show_unkown_cards(dealer, player)
+  system "clear"
+  puts ""
+  show_dealer_hand_all(dealer)
+  show_player_hand(player)
 end
 
 def cards_values(cards)
@@ -89,16 +104,15 @@ def cards_values(cards)
   end
 end
 
-def cards_value(cards)
+def cards_sum(cards)
   values = cards_values(cards)
-  aces, rest = values.partition { |val| val == ACES[1] }
-  if aces.empty?
-    rest.inject(:+)
-  else
-    rest_sum = rest.inject(:+)
-    aces.size.times { rest_sum += rest_sum > 10 ? ACES[0] : ACES[1] }
-    rest_sum
+  sum = values.inject(:+)
+
+  values.select { |val| val == ACES[1] }.size.times do
+    sum -= 10 if sum > 21
   end
+
+  sum
 end
 
 def busted?(cards_sum)
@@ -140,18 +154,18 @@ end
 def display_winner(dealer_value, player_value)
   case winner(dealer_value, player_value)
   when :player_busted
-    puts "You busted (#{player_value})! \
-Dealer won (#{dealer_value})!"
+    puts "You busted (#{player_value})!",
+         "Dealer won (#{dealer_value})!"
   when :dealer_busted
-    puts "Dealer busted (#{dealer_value})! \
-You won (#{player_value})!"
+    puts "Dealer busted (#{dealer_value})!",
+         "You won (#{player_value})!"
   when :player
     puts "You won (#{player_value})! Congratulations!"
   when :dealer
     puts "Dealer won (#{dealer_value})!"
   when :tie
-    puts "It's a tie! Dealer: #{dealer_value}; \
-Player: #{player_value}"
+    puts "It's a tie! Dealer: #{dealer_value};",
+         "Player: #{player_value}"
   end
 end
 
@@ -172,37 +186,37 @@ end
 welcome
 
 loop do # main loop
-  shuffled_deck = shuffle_deck
+  deck = shuffle_deck
   dealer = []
   player = []
 
-  deal_cards(shuffled_deck, player, dealer)
-
+  deal_cards(deck, player, dealer)
   show_cards(dealer, player)
 
-  player_value = cards_value(player)
-  dealer_value = cards_value(dealer)
   loop do
-    player_value = cards_value(player)
+    player_value = cards_sum(player)
     break if busted?(player_value) || player_stay?
-    player << give_card!(shuffled_deck)
+    player << give_card!(deck)
     show_cards(dealer, player)
   end
 
+  player_value = cards_sum(player)
+  dealer_value = cards_sum(dealer)
+
   if busted?(player_value)
-    show_cards(dealer, player, false)
+    show_unkown_cards(dealer, player)
     display_winner(dealer_value, player_value)
     play_again? ? next : break
   else
     loop do
-      dealer_value = cards_value(dealer)
+      dealer_value = cards_sum(dealer)
       break if busted?(dealer_value) || dealer_stay?(dealer_value)
-      dealer << give_card!(shuffled_deck)
-      show_cards(dealer, player, false)
+      dealer << give_card!(deck)
+      show_unkown_cards(dealer, player)
     end
   end
 
-  show_cards(dealer, player, false)
+  show_unkown_cards(dealer, player)
   display_winner(dealer_value, player_value)
 
   break unless play_again?
