@@ -109,7 +109,7 @@ def cards_sum(cards)
   sum = values.inject(:+)
 
   values.select { |val| val == ACES[1] }.size.times do
-    sum -= 10 if sum > 21
+    sum -= 10 if sum > WINNING_VALUE
   end
 
   sum
@@ -127,8 +127,8 @@ def player_stay?
     answer = gets.chomp.downcase
     possible_answers = ['hit', 'stay']
     break if possible_answers.any? { |ans| ans.start_with? answer }
-    prompt "Type (h)it, or enter to get another card, \
-or (s)tay to keep your cards."
+    prompt "Type (h)it, or enter to get another card,",
+           "or (s)tay to keep your cards."
   end
   answer.start_with? 's'
 end
