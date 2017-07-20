@@ -71,11 +71,11 @@ def show_dealer_hand_with_unkown(cards)
 end
 
 def show_dealer_hand_all(cards)
-  puts "Dealer has: #{display_cards(cards)}"
+  puts "Dealer has: #{display_cards(cards)}, (#{cards_sum(cards)})"
 end
 
 def show_player_hand(cards)
-  puts "You have: #{display_cards(cards)}"
+  puts "You have: #{display_cards(cards)}, (#{cards_sum(cards)})"
 end
 
 def show_cards(dealer, player)
