@@ -1,15 +1,13 @@
 # double_doubles.rb
 
-def twice(number)
+def double_number?(number)
   string_number = number.to_s
+  half_size = string_number.size / 2
+  string_number[0, half_size] == string_number[half_size..-1]
+end
 
-  half_index = string_number.size / 2
-  left_side = string_number[0, half_index]
-  right_side = string_number[half_index..-1]
-
-  return number if left_side == right_side
-  return number * 2
-
+def twice(number)
+  double_number?(number) ? number : number * 2
 end
 
 p twice(37) == 74

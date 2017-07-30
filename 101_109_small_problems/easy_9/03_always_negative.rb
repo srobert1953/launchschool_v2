@@ -1,7 +1,7 @@
 # always_negative.rb
 
 def negative(number)
-  number <= 0 ? number : -number
+  -number.abs
 end
 
 p negative(5) == -5
