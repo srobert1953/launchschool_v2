@@ -44,3 +44,21 @@ end
 on = count_on(switches)
 puts "The result is, that #{on} lights #{on == 1 ? "is" : "are" } left on: #{display_on(switches_on(switches))}"
 
+# My second solution with Hash:
+
+# NUMBER_OF_SWITCHES = 1000
+
+# lights = Hash.new
+# (1..NUMBER_OF_SWITCHES).each { |num| lights[num] = 'off' }
+
+# (1..NUMBER_OF_SWITCHES).each do |idx|
+#   counter = idx
+#   while counter <= lights.size
+#     lights[counter] = lights[counter] == 'on' ? 'off' : 'on'
+#     counter += idx
+#   end
+# end
+
+# p lights.select { |_,val| val == 'on'}
+
+
