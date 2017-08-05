@@ -9,8 +9,8 @@ def fibonacci(number)
   scond_register = 1
 
   # => set a range from 3 up until number and iterate over the range
-  # => with each iteration, add the current numbers in register together
-  # => and resign the second register with the result
+  # => with each iteration, add the current numbers in register
+  # => resign the second register with the result
   # => resign the second resister to the first register
   # => return second register
 
