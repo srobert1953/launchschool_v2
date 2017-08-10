@@ -25,11 +25,23 @@ def block_word?(word)
       if block.include? char
         return false if used_blocks.include? idx
         used_blocks << idx
-        p used_blocks
       end
     end
   end
   true
+end
+
+p block_word?('BATCH') #== true
+p block_word?('BUTCH') #== false
+p block_word?('jest') #== true
+
+# => Launch School Solution
+
+BLOCKS = %w(BO XK DQ CP NA GT RE FS JW HU VI LY ZM)
+
+def block_word?(word)
+  up_word = word.upcase
+  BLOCKS.none? { |block| up_word.count(block) >= 2 }
 end
 
 p block_word?('BATCH') #== true
