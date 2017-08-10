@@ -1,5 +1,4 @@
 # diamonds.rb
-require 'pry'
 
 def print_row(side, center_side)
   number_stars = side - (2 * center_side)
@@ -7,7 +6,7 @@ def print_row(side, center_side)
   puts stars.center(side)
 end
 
-def diamond(side, full = 'full')
+def diamond(side)
   side_half = side / 2
   side_half.downto(0) { |idx| print_row(side, idx) }
   1.upto(side_half) { |idx| print_row(side, idx) }
