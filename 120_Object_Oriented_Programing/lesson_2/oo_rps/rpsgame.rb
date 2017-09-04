@@ -1,6 +1,6 @@
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
+  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
   attr_accessor :value
 
@@ -10,21 +10,29 @@ class Move
 
   def >(other)
     if value == 'rock'
-      other.value == 'scissors'
+      other.value == 'scissors' || other.value == 'lizard'
     elsif value == 'paper'
-      other.value == 'rock'
+      other.value == 'rock' || other.value == 'spock'
     elsif value == 'scissors'
-      other.value == 'paper'
+      other.value == 'paper' || other.value == 'lizard'
+    elsif value == 'lizard'
+      other.value == 'paper' || other.value == 'spock'
+    elsif value == 'spock'
+      other.value == 'rock' || other.value == 'scissors'
     end
   end
 
   def <(other)
     if value == 'rock'
-      other.value == 'paper'
+      other.value == 'paper' || other.value == 'spock'
     elsif value == 'paper'
-      other.value == 'scissors'
+      other.value == 'scissors' || other.value == 'lizard'
     elsif value == 'scissors'
-      other.value == 'rock'
+      other.value == 'rock' || other.value == 'spock'
+    elsif value == 'lizard'
+      other.value == 'rock' || other.value == 'scissors'
+    elsif value == 'spock'
+      other.value == 'paper' || other.value == 'lizard'
     end
   end
 
@@ -57,7 +65,7 @@ class Human < Player
   def choose
     m = nil
     loop do
-      puts "Please choose rock, paper, or scissors."
+      puts "Please choose #{Move::VALUES.join(', ')}."
       m = gets.chomp.downcase
       break if Move::VALUES.include?(m)
       puts "You have mistyped. Please try again."
@@ -160,7 +168,7 @@ class RPSGame
   end
 
   def welcome_message
-    puts "#{human.name}, Welcome to Rock, Paper, Scissors game"
+    puts "#{human.name}, Welcome to #{Move::VALUES.map(&:capitalize).join(', ')} game"
     puts "You are playing against #{computer.name}!"
   end
 
