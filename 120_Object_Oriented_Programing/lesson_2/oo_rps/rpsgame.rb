@@ -1,6 +1,15 @@
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  VALUES = %w(rock paper scissors lizard spock)
+  VALUES_ABBREVIATION = %w(r p sc l sp)
+
+  WIN_MOVES = {
+    'rock' => ['scissors', 'lizard'],
+    'paper' => ['rock', 'spock'],
+    'scissors' => ['paper', 'lizard'],
+    'lizard' => ['paper', 'spock'],
+    'spock' => ['rock', 'scissors']
+  }
 
   attr_accessor :value
 
@@ -9,31 +18,7 @@ class Move
   end
 
   def >(other)
-    if value == 'rock'
-      other.value == 'scissors' || other.value == 'lizard'
-    elsif value == 'paper'
-      other.value == 'rock' || other.value == 'spock'
-    elsif value == 'scissors'
-      other.value == 'paper' || other.value == 'lizard'
-    elsif value == 'lizard'
-      other.value == 'paper' || other.value == 'spock'
-    elsif value == 'spock'
-      other.value == 'rock' || other.value == 'scissors'
-    end
-  end
-
-  def <(other)
-    if value == 'rock'
-      other.value == 'paper' || other.value == 'spock'
-    elsif value == 'paper'
-      other.value == 'scissors' || other.value == 'lizard'
-    elsif value == 'scissors'
-      other.value == 'rock' || other.value == 'spock'
-    elsif value == 'lizard'
-      other.value == 'rock' || other.value == 'scissors'
-    elsif value == 'spock'
-      other.value == 'paper' || other.value == 'lizard'
-    end
+    WIN_MOVES[value].include? other.value
   end
 
   def to_s
@@ -42,10 +27,10 @@ class Move
 end
 
 class Player
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :moves_history
 
   def initialize
-    @move = nil
+    @moves_history = []
     set_name
   end
 end
@@ -63,14 +48,39 @@ class Human < Player
   end
 
   def choose
-    m = nil
-    loop do
-      puts "Please choose #{Move::VALUES.join(', ')}."
-      m = gets.chomp.downcase
-      break if Move::VALUES.include?(m)
-      puts "You have mistyped. Please try again."
-    end
+    m = move_choice
+    m = full_choice_name(m) unless full_name?(m)
     self.move = Move.new(m)
+    moves_history << move
+  end
+
+  protected
+
+  def correct_move_choice?(move)
+    Move::VALUES.include?(move) ||
+    Move::VALUES_ABBREVIATION.include?(move)
+  end
+
+  def full_name?(name)
+    Move::VALUES.include?(name)
+  end
+
+  def full_choice_name(name)
+    idx = Move::VALUES_ABBREVIATION.find_index(name)
+    Move::VALUES[idx]
+  end
+
+  private
+
+  def move_choice
+  move = nil
+  loop do
+    puts "Please choose #{Move::VALUES.join(', ')}."
+    move = gets.chomp.downcase
+    break if correct_move_choice?(move)
+    puts "You have mistyped. Please try again."
+  end
+  move
   end
 end
 
@@ -81,6 +91,7 @@ class Computer < Player
 
   def choose
     self.move = Move.new(Move::VALUES.sample)
+    moves_history << move
   end
 end
 
@@ -94,14 +105,18 @@ class Scoreboard
   end
 
   def display
-    puts "#{player1.name} : #{@score[@player1]}"
-    puts "#{player2.name} : #{@score[@player2]}"
+    width = 42
+    puts ""
+    puts " SCORE ".center(width, '-')
+    puts  "#{player1.name} :#{@score[@player1]}".ljust(width / 2) +
+          "#{@score[@player2]}: #{player2.name}".rjust(width / 2)
+    puts ""
   end
 
   def update(winner)
-    if player1.class == winner.class
+    if player1 == winner
       @score[@player1] += 1
-    elsif player2.class == winner.class
+    elsif player2 == winner
       @score[@player2] += 1
     end
   end
@@ -118,6 +133,7 @@ class RPSGame
   end
 
   def play
+    clear_screen
     welcome_message
     loop do
       computer.choose
@@ -134,26 +150,31 @@ class RPSGame
 
   private
 
+  def clear_screen
+    system("cls") || system("clear")
+  end
+
   def display_moves
     puts "#{human.name}, you choose #{human.move}"
     puts "#{computer.name} choose #{computer.move}"
   end
 
   def set_winner
-    if human.move > computer.move
-      @winner = human
-    elsif human.move < computer.move
-      @winner = computer
-    else
-      @winner = nil
-    end
+    @winner = if human.move > computer.move
+                human
+              elsif human.move.value == computer.move.value
+                nil
+              else
+                computer
+              end
   end
 
   def display_winner
+    puts ""
     if @winner == human
       puts "#{human.name}, you won!"
     elsif @winner == computer
-      puts "Computer won!"
+      puts "#{computer.name} won!"
     else
       puts "It's a tie!"
     end
@@ -161,19 +182,10 @@ class RPSGame
 
   def update_score
     if @winner == human
-      scoreboard.update self.human
+      scoreboard.update human
     elsif @winner == computer
-      scoreboard.update self.computer
+      scoreboard.update computer
     end
-  end
-
-  def welcome_message
-    puts "#{human.name}, Welcome to #{Move::VALUES.map(&:capitalize).join(', ')} game"
-    puts "You are playing against #{computer.name}!"
-  end
-
-  def good_bye_message
-    puts "Thank you for playing Rock, Paper, Scissors, #{human.name}!"
   end
 
   def play_again?
@@ -184,8 +196,20 @@ class RPSGame
       break if answer.start_with?('y', 'n')
       puts "Please enter yes or no."
     end
+    clear_screen
     answer.start_with? 'y'
   end
 end
+
+  def welcome_message
+    capitalized_moves = Move::VALUES.map(&:capitalize).join(', ')
+    puts "#{human.name}, Welcome to #{capitalized_moves} game"
+    puts "You are playing against #{computer.name}!"
+    puts ""
+  end
+
+  def good_bye_message
+    puts "Thank you for playing Rock, Paper, Scissors, #{human.name}!"
+  end
 
 RPSGame.new.play
