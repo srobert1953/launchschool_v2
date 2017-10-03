@@ -1,6 +1,8 @@
 require 'pry'
 
 class Board
+  DIRECTIONS = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: -1}]
+
   attr_reader :grid, :columns, :rows, :grid_size
 
   def initialize(columns, rows)
@@ -11,72 +13,79 @@ class Board
   end
 
   def available_squares
-    grid.select { |square| square.available? }
+    squares = grid.select { |_, square| square.available? }
+    squares.map { |_, square| square }
   end
 
   def full?
     available_squares.empty?
   end
 
-  def winner
-    check_row
+  def has_winner?(player)
+    player_squares = grid.select { |_, square| square.marker == player.marker }
+    player_squares = player_squares.map { |position, _| position }
+    winner?(player_squares)
   end
 
   private
 
-  def check_row
-    rows.times do |row|
-      row_squares = grid.select do |square|
-        square.position.last == row &&
-        square.marker != Square::INITIAL_MARKER
-      end
-      compare_neighbours(row_squares, row) if row_squares.size == 3
-    end
-  end
-
-  def compare_neighbours(row_squares, row)
-    (1...columns - 1).each do |column|
-      middle = row_squares.find { |square| square.position == [column, row] }
-      left = row_squares.find { |square| square.position == [column - 1, row] }
-      right = row_squares.find { |square| square.position == [column + 1, row] }
-      if left && right
-        p "Printing"
-        p middle.has_same_neighbours(left, right)
-      end
-    end
-  end
-
   def create_grid(x_columns, y_rows)
-    grid = []
+    grid = {}
     (0...y_rows).each do |y|
       (0...x_columns).each do |x|
-        grid << Square.new(x, y)
+        grid[[x, y]] = Square.new
       end
     end
     grid
+  end
+
+  def winner?(grid_selection)
+    winner = false
+    DIRECTIONS.each do |direction|
+      if check_direction(grid_selection, direction)
+        winner = true
+        break
+      end
+    end
+    winner
+  end
+
+  def check_direction(grid_selection, direction)
+    grid_selection.each do |position|
+      x = position.first
+      y = position.last
+      return true if winning_direction?(grid_selection, x, y, direction)
+    end
+    false
+  end
+
+  def winning_direction?(grid, x, y, direction)
+    all_positions = false
+    (1...3).each do |cur|
+      next_x = direction[:x] * cur
+      next_y = direction[:y] * cur
+      if grid.include? ([x + next_x, y + next_y])
+        all_positions = true
+      else
+        all_positions = false
+        break
+      end
+    end
+    return true if all_positions == true
+    false
   end
 end
 
 class Square
   INITIAL_MARKER = ' '
   attr_accessor :marker
-  attr_reader :position
 
-  def initialize(x_position, y_position)
-    @position = [x_position, y_position]
+  def initialize
     @marker = INITIAL_MARKER
   end
 
   def available?
     marker == INITIAL_MARKER
-  end
-
-  def ==(other)
-    marker == other.marker
-  end
-
-  def has_same_neighbours(other1, other2)
-    marker == other1.marker && marker == other2.marker
   end
 end
 
@@ -95,10 +104,9 @@ end
 class Human < Player
   def mark(board)
     grid_size = board.grid_size
-    grid = board.grid
     display_mark_message(grid_size)
-    grid_number = get_mark_answer(grid)
-    super(grid[grid_number])
+    square_position = get_mark_answer(board)
+    super(board.grid[square_position])
   end
 
   private
@@ -106,17 +114,31 @@ class Human < Player
     puts "Please choose available square (1-#{grid_size}):"
   end
 
-  def get_mark_answer(grid)
-    answer = nil
+  def get_mark_answer(board)
+    position = nil
     loop do
       answer = gets.chomp.to_i
-      if (1..grid.size).include?(answer) &&
-         grid[answer - 1].available?
+      position = identify_position(board, answer)
+      if (1..board.grid_size).include?(answer) &&
+         board.grid[position].available?
         break
       end
       puts "You choose incorrect or unavailable square"
     end
-    answer - 1
+    position
+  end
+
+  def identify_position(board, numeric_position)
+    counter = 1
+    (0...board.columns).each do |y|
+      (0...board.rows).each do |x|
+        if counter == numeric_position
+          return [x, y]
+        end
+        counter += 1
+      end
+    end
+    false
   end
 end
 
@@ -129,8 +151,8 @@ end
 
 class TTTGame
   SQUARE_HEIGHT = 3
-  BOARD_WIDTH = 3
-  BOARD_HEIGHT = 3
+  BOARD_WIDTH = 4
+  BOARD_HEIGHT = 4
 
   attr_reader :board, :human, :computer
 
@@ -143,29 +165,32 @@ class TTTGame
   def play
     display_welcome_message
     loop do
-      system "clear"
       display(board)
+
       human.mark(board)
-      break if board.full?
-      board.winner
-      # break if someone_won?
-      puts "Computer is choosing"
-      sleep rand(1..2)
+      break if board.has_winner?(human) || board.full?
+
       computer.mark(board)
-      board.winner
-      break if board.full?
-      # p computer.my_squares
-      # break if board.full?
-      # break if someone_won?
+      break if board.has_winner?(computer) || board.full?
     end
-    display(board)
-    # display_result
+    display_result
     display_goodbye_message
   end
 
   private
+  def display_result
+    display(board)
+    if board.has_winner?(human)
+      puts "You have won!"
+    elsif board.has_winner?(computer)
+      puts "Computer has won!"
+    else
+      puts "It's a tie!"
+    end
+  end
 
   def display(board)
+    system "clear"
     puts ""
     board.rows.times do |row|
       print_row_separator(row, board.columns)
@@ -175,22 +200,22 @@ class TTTGame
   end
 
   def print_squares(grid, row)
-    row_squares = grid.select { |square| square.position.last == row }
+    row = grid.select { |position, _| position.last == row }
     SQUARE_HEIGHT.times do |idx|
-      square_line(row_squares, idx)
+      square_line(row, idx)
     end
   end
 
   def square_line(row, line_idx)
-    puts row.map { |square| box_fill(square, square.marker)[line_idx] }.join
+    puts row.map { |position, square| box_fill(position, square.marker)[line_idx] }.join
   end
 
   def print_row_separator(row, columns)
     puts "-----+" * (columns - 1) + "-----" unless row == 0
   end
 
-  def box_fill(square, marker)
-    if square.position.first == 0
+  def box_fill(position, marker)
+    if position.first == 0
       [
         "     ",
         "  #{marker}  ",
