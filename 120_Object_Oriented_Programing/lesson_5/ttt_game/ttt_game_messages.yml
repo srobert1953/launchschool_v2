@@ -33,6 +33,7 @@ en:
              ▐█.▪▐█·▐▀▀▄·     ▐█.▪▄█▀▀█ ▐▀▀▄·     ▐█.▪ ▄█▀▄ ▐▀▀▪▄
              ▐█▌·▐█▌▐█.█▌     ▐█▌·▐█ ▪▐▌▐█.█▌     ▐█▌·▐█▌.▐▌▐█▄▄▌
              ▀▀▀ ▀▀▀·▀  ▀     ▀▀▀  ▀  ▀ ·▀  ▀     ▀▀▀  ▀█▄▀▪ ▀▀▀
-  start_game_answer: Please type p/play or s/set
-
-
+  start_game_incorrect: Please type p/play or s/set
+  play_again: Play again? (y/n)
+  play_again_incorrect: Please type y/yes or n/no
+  configuration: Please use this configuration

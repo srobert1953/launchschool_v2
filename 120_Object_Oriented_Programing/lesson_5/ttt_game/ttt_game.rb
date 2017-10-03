@@ -9,7 +9,7 @@ class Board
   def initialize(columns, rows)
     @columns = columns
     @rows = rows
-    @grid = create_grid(columns, rows)
+    reset
     @grid_size = grid.size
   end
 
@@ -26,6 +26,10 @@ class Board
     player_squares = grid.select { |_, square| square.marker == player.marker }
     player_squares = player_squares.map { |position, _| position }
     winner?(player_squares)
+  end
+
+  def reset
+    @grid = create_grid(columns, rows)
   end
 
   private
@@ -166,19 +170,21 @@ class TTTGame
   def play
     display_welcome_message
     setup_game
-    display(board)
-    players_moves
-    display_result
+    loop do
+      players_move
+      display_result
+      break unless play_again?
+    end
     display_goodbye_message
   end
 
   private
   def setup_game
-    answer = get_start_game_answer
+    answer = ask_question('start_game', ['play', 'set'])
     if answer == :play
       quick_game
-    # else
-    #   setup_options
+    else
+      setup_options
     end
   end
 
@@ -188,17 +194,30 @@ class TTTGame
     players << Computer.new('O', "Computer")
   end
 
-  def get_start_game_answer
+  def setup_options
+    clear_screen
+    puts MESSAGES['en']['configuration']
+    grid_size = ask_question('grid_size', ['1', '2', '3', '3x3', '5x5', '9x9'])
+# To be continued...
+  end
+
+  def play_again?
+    answer = ask_question('play_again', ['yes', 'no'])
+    board.reset
+    return true if answer == :yes
+    return false if answer == :no
+  end
+
+  def ask_question(question, answers)
     answer = nil
-    acceptable_answers = ['play', 'set']
+    puts MESSAGES['en'][question]
     loop do
-      puts ""
       print "=> "
       answer = gets.chomp.downcase
-      break if acceptable_answers.any? { |choice| choice.start_with? answer }
-      puts MESSAGES['en']['start_game_answer']
+      break if answers.any? { |choice| choice.start_with? answer }
+      puts MESSAGES['en'][question + '_incorrect']
     end
-    convert_to_symbol(answer, acceptable_answers)
+    convert_to_symbol(answer, answers)
   end
 
   def convert_to_symbol(answer, choises)
@@ -206,7 +225,7 @@ class TTTGame
     :"#{value[0]}"
   end
 
-  def players_moves
+  def players_move
     no_of_players = players.size
     loop do
       display(board)
