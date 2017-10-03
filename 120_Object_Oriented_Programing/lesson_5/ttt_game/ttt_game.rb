@@ -1,4 +1,5 @@
 require 'pry'
+require 'yaml'
 
 class Board
   DIRECTIONS = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: -1}]
@@ -90,10 +91,11 @@ class Square
 end
 
 class Player
-  attr_reader :marker
+  attr_reader :marker, :name
 
-  def initialize(marker)
+  def initialize(marker, name)
     @marker = marker
+    @name = name
   end
 
   def mark(square)
@@ -151,46 +153,94 @@ end
 
 class TTTGame
   SQUARE_HEIGHT = 3
-  BOARD_WIDTH = 4
-  BOARD_HEIGHT = 4
+  BOARD_WIDTH = 3
+  BOARD_HEIGHT = 3
+  MESSAGES = YAML.load_file('ttt_game_messages.yml')
 
-  attr_reader :board, :human, :computer
+  attr_accessor :board, :players
 
   def initialize
-    @board = Board.new(BOARD_WIDTH, BOARD_HEIGHT)
-    @human = Human.new('X')
-    @computer = Computer.new('O')
+    @players = []
   end
 
   def play
     display_welcome_message
-    loop do
-      display(board)
-
-      human.mark(board)
-      break if board.has_winner?(human) || board.full?
-
-      computer.mark(board)
-      break if board.has_winner?(computer) || board.full?
-    end
+    setup_game
+    display(board)
+    players_moves
     display_result
     display_goodbye_message
   end
 
   private
+  def setup_game
+    answer = get_start_game_answer
+    if answer == :play
+      quick_game
+    # else
+    #   setup_options
+    end
+  end
+
+  def quick_game
+    @board = Board.new(BOARD_WIDTH, BOARD_HEIGHT)
+    players << Human.new('X', "You")
+    players << Computer.new('O', "Computer")
+  end
+
+  def get_start_game_answer
+    answer = nil
+    acceptable_answers = ['play', 'set']
+    loop do
+      puts ""
+      print "=> "
+      answer = gets.chomp.downcase
+      break if acceptable_answers.any? { |choice| choice.start_with? answer }
+      puts MESSAGES['en']['start_game_answer']
+    end
+    convert_to_symbol(answer, acceptable_answers)
+  end
+
+  def convert_to_symbol(answer, choises)
+    value = choises.select { |possibility| possibility.start_with? answer}
+    :"#{value[0]}"
+  end
+
+  def players_moves
+    no_of_players = players.size
+    loop do
+      display(board)
+      (0...no_of_players).each do |idx|
+        current_player = players[idx]
+        current_player.mark(board)
+        return if board.has_winner?(current_player) || board.full?
+      end
+    end
+  end
+
   def display_result
     display(board)
-    if board.has_winner?(human)
-      puts "You have won!"
-    elsif board.has_winner?(computer)
-      puts "Computer has won!"
+    winner = get_winner
+    if !!winner
+      puts "#{winner.name} won!"
     else
       puts "It's a tie!"
     end
   end
 
+  def get_winner
+    players.each do |player|
+      return player if board.has_winner?(player)
+    end
+    nil
+  end
+
+  def clear_screen
+    system("cls") || system("clear")
+  end
+
   def display(board)
-    system "clear"
+    clear_screen
     puts ""
     board.rows.times do |row|
       print_row_separator(row, board.columns)
@@ -211,15 +261,15 @@ class TTTGame
   end
 
   def print_row_separator(row, columns)
-    puts "-----+" * (columns - 1) + "-----" unless row == 0
+    puts "  " + "-----+" * (columns - 1) + "-----" unless row == 0
   end
 
   def box_fill(position, marker)
     if position.first == 0
       [
-        "     ",
-        "  #{marker}  ",
-        "     "
+        "       ",
+        "    #{marker}  ",
+        "       "
       ]
     else
       [
@@ -231,11 +281,13 @@ class TTTGame
   end
 
   def display_welcome_message
-    puts "Welcome to TicTacToe Game!"
+    clear_screen
+    puts MESSAGES['en']['welcome']
+    puts MESSAGES['en']['rules']
   end
 
   def display_goodbye_message
-    puts "Thank you for playing TicTacToe!"
+    puts MESSAGES['en']['good_bye']
   end
 end
 

@@ -1,0 +1,38 @@
+en:
+  welcome: |
+            ▄▄▄█████▓ ██▓ ██ ▄█▀   ▄▄▄█████▓ ▄▄▄       ██ ▄█▀   ▄▄▄█████▓ ▒█████  ▓█████
+            ▓  ██▒ ▓▒▓██▒ ██▄█▒    ▓  ██▒ ▓▒▒████▄     ██▄█▒    ▓  ██▒ ▓▒▒██▒  ██▒▓█   ▀
+            ▒ ▓██░ ▒░▒██▒▓███▄░    ▒ ▓██░ ▒░▒██  ▀█▄  ▓███▄░    ▒ ▓██░ ▒░▒██░  ██▒▒███
+            ░ ▓██▓ ░ ░██░▓██ █▄    ░ ▓██▓ ░ ░██▄▄▄▄██ ▓██ █▄    ░ ▓██▓ ░ ▒██   ██░▒▓█  ▄
+              ▒██▒ ░ ░██░▒██▒ █▄     ▒██▒ ░  ▓█   ▓██▒▒██▒ █▄     ▒██▒ ░ ░ ████▓▒░░▒████▒
+              ▒ ░░   ░▓  ▒ ▒▒ ▓▒     ▒ ░░    ▒▒   ▓▒█░▒ ▒▒ ▓▒     ▒ ░░   ░ ▒░▒░▒░ ░░ ▒░ ░
+                ░     ▒ ░░ ░▒ ▒░       ░      ▒   ▒▒ ░░ ░▒ ▒░       ░      ░ ▒ ▒░  ░ ░  ░
+              ░       ▒ ░░ ░░ ░      ░        ░   ▒   ░ ░░ ░      ░      ░ ░ ░ ▒     ░
+                      ░  ░  ░                     ░  ░░  ░                   ░ ░     ░  ░
+  rules: |
+
+          Welcome to Tic Tac Toe Game!
+
+          You can enjoy hours of the best school game to bend the boredom in the long
+          school classes right this moment.
+
+          To start this awesome game now, just type 'play' and you will be taken to a
+          quick play against computer on a 3x3 grid.
+
+          To have better control over your game, type 'set' so you can advance your
+          skills and customize grid size, choose your favorite marker or differnet
+          computer character that better understands you :)
+          Or ask your friend to play with you in a multiplayer version.
+
+          So X O GO!
+
+  good_bye: |
+            I hope you had fun. Good Bye!
+            ▄▄▄▄▄▪  ▄ •▄     ▄▄▄▄▄ ▄▄▄· ▄ •▄     ▄▄▄▄▄      ▄▄▄ .
+            •██  ██ █▌▄▌▪    •██  ▐█ ▀█ █▌▄▌▪    •██  ▪     ▀▄.▀·
+             ▐█.▪▐█·▐▀▀▄·     ▐█.▪▄█▀▀█ ▐▀▀▄·     ▐█.▪ ▄█▀▄ ▐▀▀▪▄
+             ▐█▌·▐█▌▐█.█▌     ▐█▌·▐█ ▪▐▌▐█.█▌     ▐█▌·▐█▌.▐▌▐█▄▄▌
+             ▀▀▀ ▀▀▀·▀  ▀     ▀▀▀  ▀  ▀ ·▀  ▀     ▀▀▀  ▀█▄▀▪ ▀▀▀
+  start_game_answer: Please type p/play or s/set
+
+
