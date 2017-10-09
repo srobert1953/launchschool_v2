@@ -1,4 +1,3 @@
-require 'pry'
 require 'yaml'
 
 class Board
@@ -197,8 +196,29 @@ class TTTGame
   def setup_options
     clear_screen
     puts MESSAGES['en']['configuration']
-    grid_size = ask_question('grid_size', ['1', '2', '3', '3x3', '5x5', '9x9'])
-# To be continued...
+    player_name = ask_name
+    puts ""
+    player_symbol = ask_for_symbol
+    puts ""
+    grid_size = ask_question('grid_size', ['1', '2', '3'])
+    puts ""
+    initialize_grid(grid_size)
+    initialize_players(player_name, player_symbol)
+  end
+
+  def initialize_players(name, player_symbol)
+    players << Human.new(player_symbol, name)
+    players << Computer.new('O', "Computer")
+  end
+
+  def initialize_grid(size)
+    case size
+    when :'1' then width, height = 3, 3
+    when :'2' then width, height = 5, 5
+    when :'3' then width, height = 9, 9
+    end
+    @board = Board.new(width, height)
+
   end
 
   def play_again?
@@ -218,6 +238,24 @@ class TTTGame
       puts MESSAGES['en'][question + '_incorrect']
     end
     convert_to_symbol(answer, answers)
+  end
+
+  def ask_name
+    puts MESSAGES['en']['your_name']
+    print "=> "
+    gets.chomp
+  end
+
+  def ask_for_symbol
+    puts MESSAGES['en']['symbols']
+    answer = nil
+    loop do
+      print "=> "
+      answer = gets.chomp
+      break if answer.size == 1 && answer != 'O'
+      puts MESSAGES['en']['symbols_incorrect']
+    end
+    answer
   end
 
   def convert_to_symbol(answer, choises)
@@ -261,10 +299,23 @@ class TTTGame
   def display(board)
     clear_screen
     puts ""
+    display_players_info
     board.rows.times do |row|
       print_row_separator(row, board.columns)
       print_squares(board.grid, row)
     end
+    puts ""
+  end
+
+  def display_players_info
+    info = ""
+    players.each do |player|
+      info << player.name
+      info << " have "
+      info << player.marker
+      info << ". "
+    end
+    puts info
     puts ""
   end
 

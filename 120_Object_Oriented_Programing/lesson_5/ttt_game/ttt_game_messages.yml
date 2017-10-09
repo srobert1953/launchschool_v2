@@ -36,4 +36,20 @@ en:
   start_game_incorrect: Please type p/play or s/set
   play_again: Play again? (y/n)
   play_again_incorrect: Please type y/yes or n/no
-  configuration: Please use this configuration
+  configuration: |
+                  Please choose grid size, your personal symbol, and how many
+                  concurrent symbols win.
+  grid_size: |
+              On what grid do you want to play?
+              Press '1' for 3x3
+              Press '2' for 5x5
+              Press '3' for 9x9
+  grid_size_incorrect: Please choose 1, 2, or 3
+  your_name: |
+              But first, what's your name?
+
+  your_name_incorrect: Is this your name?
+  symbols: |
+            Please copy and paste any of the following, or type any one character you like
+            (X, ▒, ╬, #, █, ☺, ♥, ♛, ☃)
+  symbols_incorrect: You can only choose one character different then 'O'.
