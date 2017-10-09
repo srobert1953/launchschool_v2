@@ -1,7 +1,10 @@
 require 'yaml'
 
 class Board
-  DIRECTIONS = [{x: 0, y: 1}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: -1}]
+  DIRECTIONS = [{ x: 0, y: 1 },
+                { x: 1, y: 0 },
+                { x: 1, y: 1 },
+                { x: 1, y: -1 }].freeze
 
   attr_reader :grid, :columns, :rows, :grid_size
 
@@ -68,7 +71,7 @@ class Board
     (1...3).each do |cur|
       next_x = direction[:x] * cur
       next_y = direction[:y] * cur
-      if grid.include? ([x + next_x, y + next_y])
+      if grid.include?([x + next_x, y + next_y])
         all_positions = true
       else
         all_positions = false
@@ -81,7 +84,7 @@ class Board
 end
 
 class Square
-  INITIAL_MARKER = ' '
+  INITIAL_MARKER = ' '.freeze
   attr_accessor :marker
 
   def initialize
@@ -115,6 +118,7 @@ class Human < Player
   end
 
   private
+
   def display_mark_message(grid_size)
     puts "Please choose available square (1-#{grid_size}):"
   end
@@ -124,11 +128,11 @@ class Human < Player
     loop do
       answer = gets.chomp.to_i
       position = identify_position(board, answer)
-      if (1..board.grid_size).include?(answer) &&
+      if (1..board.grid_size).cover?(answer) &&
          board.grid[position].available?
         break
       end
-      puts "You choose incorrect or unavailable square"
+      puts 'You choose incorrect or unavailable square'
     end
     position
   end
@@ -178,8 +182,9 @@ class TTTGame
   end
 
   private
+
   def setup_game
-    answer = ask_question('start_game', ['play', 'set'])
+    answer = ask_question('start_game', %w(play set))
     if answer == :play
       quick_game
     else
@@ -189,26 +194,26 @@ class TTTGame
 
   def quick_game
     @board = Board.new(BOARD_WIDTH, BOARD_HEIGHT)
-    players << Human.new('X', "You")
-    players << Computer.new('O', "Computer")
+    players << Human.new('X', 'You')
+    players << Computer.new('O', 'Computer')
   end
 
   def setup_options
     clear_screen
     puts MESSAGES['en']['configuration']
     player_name = ask_name
-    puts ""
+    puts ''
     player_symbol = ask_for_symbol
-    puts ""
-    grid_size = ask_question('grid_size', ['1', '2', '3'])
-    puts ""
+    puts ''
+    grid_size = ask_question('grid_size', %w(1 2 3))
+    puts ''
     initialize_grid(grid_size)
     initialize_players(player_name, player_symbol)
   end
 
   def initialize_players(name, player_symbol)
     players << Human.new(player_symbol, name)
-    players << Computer.new('O', "Computer")
+    players << Computer.new('O', 'Computer')
   end
 
   def initialize_grid(size)
@@ -218,11 +223,10 @@ class TTTGame
     when :'3' then width, height = 9, 9
     end
     @board = Board.new(width, height)
-
   end
 
   def play_again?
-    answer = ask_question('play_again', ['yes', 'no'])
+    answer = ask_question('play_again', %w(yes no))
     board.reset
     return true if answer == :yes
     return false if answer == :no
@@ -242,7 +246,7 @@ class TTTGame
 
   def ask_name
     puts MESSAGES['en']['your_name']
-    print "=> "
+    print '=> '
     gets.chomp
   end
 
@@ -250,7 +254,7 @@ class TTTGame
     puts MESSAGES['en']['symbols']
     answer = nil
     loop do
-      print "=> "
+      print '=> '
       answer = gets.chomp
       break if answer.size == 1 && answer != 'O'
       puts MESSAGES['en']['symbols_incorrect']
@@ -259,7 +263,7 @@ class TTTGame
   end
 
   def convert_to_symbol(answer, choises)
-    value = choises.select { |possibility| possibility.start_with? answer}
+    value = choises.select { |possibility| possibility.start_with? answer }
     :"#{value[0]}"
   end
 
@@ -293,30 +297,30 @@ class TTTGame
   end
 
   def clear_screen
-    system("cls") || system("clear")
+    system('cls') || system('clear')
   end
 
   def display(board)
     clear_screen
-    puts ""
+    puts ''
     display_players_info
     board.rows.times do |row|
       print_row_separator(row, board.columns)
       print_squares(board.grid, row)
     end
-    puts ""
+    puts ''
   end
 
   def display_players_info
-    info = ""
+    info = ''
     players.each do |player|
       info << player.name
-      info << " have "
+      info << ' have '
       info << player.marker
-      info << ". "
+      info << '. '
     end
     puts info
-    puts ""
+    puts ''
   end
 
   def print_squares(grid, row)
@@ -327,25 +331,28 @@ class TTTGame
   end
 
   def square_line(row, line_idx)
-    puts row.map { |position, square| box_fill(position, square.marker)[line_idx] }.join
+    line = row.map do |position, square|
+      box_fill(position, square.marker)[line_idx]
+    end
+    puts line.join
   end
 
   def print_row_separator(row, columns)
-    puts "  " + "-----+" * (columns - 1) + "-----" unless row == 0
+    puts '  ' + '-----+' * (columns - 1) + '-----' unless row.zero?
   end
 
   def box_fill(position, marker)
-    if position.first == 0
+    if position.first.zero?
       [
-        "       ",
+        '       ',
         "    #{marker}  ",
-        "       "
+        '       '
       ]
     else
       [
-        "|     ",
+        '|     ',
         "|  #{marker}  ",
-        "|     "
+        '|     '
       ]
     end
   end
