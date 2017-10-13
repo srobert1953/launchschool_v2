@@ -169,9 +169,8 @@ class Computer < Player
   def choose_square(board)
     if middle_square(board).available?
       middle_square(board)
-    # elsif player_will_win?(board)
-      # block_square(board)
-      board.available_squares.sample
+    elsif player_will_win?(board)
+      block_square(board)
     else
       board.available_squares.sample
     end
@@ -198,10 +197,10 @@ class Computer < Player
 
   def subsequence_can_win?(squares_array)
     squares = squares_array.select do |square|
+      return false if square.marker == self.marker
       square.marker == Square::INITIAL_MARKER
     end
-    squares.reject! { |square| square.marker = self.marker }
-    squares == squares_array
+    squares.count == 1
   end
 
   def all_subsequences(directions, subsequences_size)
@@ -317,10 +316,8 @@ class Computer < Player
   def block_square(board)
     player_win_rows = identify_possible_win_squares(board)
     win_squares = player_win_rows.sample
-    binding.pry
     win_squares.select! { |square| square.marker == Square::INITIAL_MARKER }
     win_squares.first
-    board.available_squares.sample
   end
 end
 
@@ -423,7 +420,7 @@ class TTTGame
   end
 
   def initialize_quick_game
-    @board = Board.new(4, 4)
+    @board = Board.new(3, 3)
     configure_quick_game_players
   end
 
