@@ -1,4 +1,5 @@
 # ttt_game.rb
+require 'pry'
 
 class Board
   DIRECTIONS = [{ x: 0, y: 1 },
@@ -79,8 +80,7 @@ class Board
         break
       end
     end
-    return true if all_positions == true
-    false
+    all_positions
   end
 end
 
@@ -164,11 +164,14 @@ class Computer < Player
     super(computer_pick)
   end
 
+  private
+
   def choose_square(board)
     if middle_square(board).available?
       middle_square(board)
-    elsif player_will_win?(board)
-      block_square(board)
+    # elsif player_will_win?(board)
+      # block_square(board)
+      board.available_squares.sample
     else
       board.available_squares.sample
     end
@@ -181,42 +184,142 @@ class Computer < Player
   end
 
   def player_will_win?(board)
-    grid = board.grid
-    player_squares = identify_player_squares(grid)
-    winning_possition = if check_columns(board, player_squares)
-      check_columns(board, player_squares)
-    # when { x: 1, y: 0 } then check_rows
-    # when { x: 1, y: 1 } then check_left_diagonal
-    # when { x: 1, y: -1 } then check_right_diagonal
-    end
-    p winning_possition
+    p player_squares = identify_possible_win_squares(board)
+    player_squares.size > 0
   end
 
-  def check_columns(board, squares)
-    board.columns.times do |column|
-      counter = 0
-      winning_square = nil
-      board.rows.times do |row|
-        if squares.include? [column, row] &&
-           board.grid[[column, row]].marker != marker
-          counter += 1
-        else
-          winning_square = [column, row]
-        end
+  def identify_possible_win_squares(board)
+    subsequences_size = board.subsequences
+    all_possible_moves = all_subsequences(directions(board), subsequences_size)
+    all_possible_moves.select do |subsequence|
+      subsequence_can_win?(subsequence)
+    end
+  end
+
+  def subsequence_can_win?(squares_array)
+    squares = squares_array.select do |square|
+      square.marker == Square::INITIAL_MARKER
+    end
+    squares.reject! { |square| square.marker = self.marker }
+    squares == squares_array
+  end
+
+  def all_subsequences(directions, subsequences_size)
+    subsequences_from_directions = []
+    directions.each do |direction|
+      (direction.size - subsequences_size + 1).times do |separator|
+        subsequences_from_directions << direction[separator, subsequences_size]
       end
-      return winning_square if counter == board.subsequences - 1
     end
-    nil
+    subsequences_from_directions
   end
 
-  def identify_player_squares(grid)
-    grid.select do |_, square|
-      square.marker != self.marker &&
-      square.marker != Square::INITIAL_MARKER
+  def directions(board)
+    result = []
+    result.concat rows(board)
+    result.concat columns(board)
+    result.concat diagonals(rows(board), board.subsequences)
+    result.concat diagonals(columns(board).reverse, board.subsequences)
+  end
+
+  def rows(board)
+    squares = board.grid
+    row = []
+    (0...board.columns).each do |y|
+      positions = []
+      (0...board.rows).each do |x|
+        positions << squares[[x, y]]
+      end
+      row << positions
     end
+    row
+  end
+
+  def columns(board)
+    squares = board.grid
+    row = []
+    (0...board.rows).each do |x|
+      positions = []
+      (0...board.columns).each do |y|
+        positions << squares[[x, y]]
+      end
+      row << positions
+    end
+    row
+  end
+
+  def diagonals(rows, subsequences)
+    combinations = upper_diagonals(rows) + lower_diagonals(rows)
+    combinations.uniq!
+    combinations.select { |diagonal| diagonal.size >= subsequences }
+  end
+
+  def upper_diagonals(rows)
+    upper_offset_rows = offset_rows_left(rows)
+    create_upper_diagonals(upper_offset_rows)
+  end
+
+  def lower_diagonals(rows)
+    lower_offset_rows = offset_rows_right(rows)
+    create_lower_diagonals(lower_offset_rows)
+  end
+
+  def offset_rows_left(rows)
+    position = 0
+    offset_rows = []
+    rows.each do |row|
+      offset_rows << row[position...rows.count]
+      position += 1
+    end
+    offset_rows
+  end
+
+  def offset_rows_right(rows)
+    position = 0
+    offset_rows = []
+    rows.each do |row|
+      offset_rows << row[0..position]
+      position += 1
+    end
+    offset_rows
+  end
+
+  def create_upper_diagonals(upper_offset_rows)
+    diagonals = []
+    upper_offset_rows.first.size.times do |counter|
+      diagonal = []
+      upper_offset_rows.each do |row|
+        diagonal << row[counter] unless row[counter].nil?
+      end
+      diagonals << diagonal
+    end
+    diagonals
+  end
+
+  def create_lower_diagonals(lower_offset_rows)
+    rows = []
+
+    lower_offset_rows.each do |row|
+      rows << row.reverse
+    end
+
+    diagonals = []
+    rows.last.size.times do |counter|
+      diagonal = []
+      rows.each do |row|
+        diagonal << row[counter] unless row[counter].nil?
+      end
+      diagonals << diagonal
+    end
+    diagonals
   end
 
   def block_square(board)
+    player_win_rows = identify_possible_win_squares(board)
+    win_squares = player_win_rows.sample
+    binding.pry
+    win_squares.select! { |square| square.marker == Square::INITIAL_MARKER }
+    win_squares.first
     board.available_squares.sample
   end
 end
@@ -320,7 +423,7 @@ class TTTGame
   end
 
   def initialize_quick_game
-    @board = Board.new(3, 3)
+    @board = Board.new(4, 4)
     configure_quick_game_players
   end
 
@@ -330,7 +433,7 @@ class TTTGame
   end
 
   def game_screen
-    clear_screen
+    # clear_screen
     display_score
     display_grid
   end
