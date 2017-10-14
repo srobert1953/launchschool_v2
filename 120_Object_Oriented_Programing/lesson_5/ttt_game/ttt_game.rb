@@ -576,7 +576,11 @@ class TTTGame
     loop do
       prompt
       user_answer = gets.chomp.downcase
-      break if answers.any? { |choice| choice.start_with? user_answer }
+      if !user_answer.empty? &&
+         answers.any? { |choice| choice.start_with? user_answer }
+        break
+      end
+
       puts "Please choose one of the following: #{answers.join(', ')}"
     end
     convert_to_symbol(user_answer, answers)
