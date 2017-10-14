@@ -580,7 +580,6 @@ class TTTGame
          answers.any? { |choice| choice.start_with? user_answer }
         break
       end
-
       puts "Please choose one of the following: #{answers.join(', ')}"
     end
     convert_to_symbol(user_answer, answers)
