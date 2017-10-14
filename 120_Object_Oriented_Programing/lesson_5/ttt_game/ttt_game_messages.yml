@@ -1,31 +1,21 @@
 en:
   welcome: |
-            ▄▄▄█████▓ ██▓ ██ ▄█▀   ▄▄▄█████▓ ▄▄▄       ██ ▄█▀   ▄▄▄█████▓ ▒█████  ▓█████
-            ▓  ██▒ ▓▒▓██▒ ██▄█▒    ▓  ██▒ ▓▒▒████▄     ██▄█▒    ▓  ██▒ ▓▒▒██▒  ██▒▓█   ▀
-            ▒ ▓██░ ▒░▒██▒▓███▄░    ▒ ▓██░ ▒░▒██  ▀█▄  ▓███▄░    ▒ ▓██░ ▒░▒██░  ██▒▒███
-            ░ ▓██▓ ░ ░██░▓██ █▄    ░ ▓██▓ ░ ░██▄▄▄▄██ ▓██ █▄    ░ ▓██▓ ░ ▒██   ██░▒▓█  ▄
-              ▒██▒ ░ ░██░▒██▒ █▄     ▒██▒ ░  ▓█   ▓██▒▒██▒ █▄     ▒██▒ ░ ░ ████▓▒░░▒████▒
-              ▒ ░░   ░▓  ▒ ▒▒ ▓▒     ▒ ░░    ▒▒   ▓▒█░▒ ▒▒ ▓▒     ▒ ░░   ░ ▒░▒░▒░ ░░ ▒░ ░
-                ░     ▒ ░░ ░▒ ▒░       ░      ▒   ▒▒ ░░ ░▒ ▒░       ░      ░ ▒ ▒░  ░ ░  ░
-              ░       ▒ ░░ ░░ ░      ░        ░   ▒   ░ ░░ ░      ░      ░ ░ ░ ▒     ░
-                      ░  ░  ░                     ░  ░░  ░                   ░ ░     ░  ░
-  rules: |
+            ▄▄▄▄▄▪  ▄ •▄     ▄▄▄▄▄ ▄▄▄· ▄ •▄     ▄▄▄▄▄      ▄▄▄ .
+            •██  ██ █▌▄▌▪    •██  ▐█ ▀█ █▌▄▌▪    •██  ▪     ▀▄.▀·
+             ▐█.▪▐█·▐▀▀▄·     ▐█.▪▄█▀▀█ ▐▀▀▄·     ▐█.▪ ▄█▀▄ ▐▀▀▪▄
+             ▐█▌·▐█▌▐█.█▌     ▐█▌·▐█ ▪▐▌▐█.█▌     ▐█▌·▐█▌.▐▌▐█▄▄▌
+             ▀▀▀ ▀▀▀·▀  ▀     ▀▀▀  ▀  ▀ ·▀  ▀     ▀▀▀  ▀█▄▀▪ ▀▀▀
 
-          Welcome to Tic Tac Toe Game!
+             Welcome to Tic Tac Toe Game.
 
-          You can enjoy hours of the best school game to bend the boredom in the long
-          school classes right this moment.
+             To start quick game type 'play'
+             If you want to configure your game, type 'set'
 
-          To start this awesome game now, just type 'play' and you will be taken to a
-          quick play against computer on a 3x3 grid.
+             Have fun plaing!
 
-          To have better control over your game, type 'set' so you can advance your
-          skills and customize grid size, choose your favorite marker or differnet
-          computer character that better understands you :)
-          Or ask your friend to play with you in a multiplayer version.
+  game_type: |
 
-          So X O GO!
-
+             Type 'play' or 'set'
   good_bye: |
             I hope you had fun. Good Bye!
             ▄▄▄▄▄▪  ▄ •▄     ▄▄▄▄▄ ▄▄▄· ▄ •▄     ▄▄▄▄▄      ▄▄▄ .
@@ -33,23 +23,40 @@ en:
              ▐█.▪▐█·▐▀▀▄·     ▐█.▪▄█▀▀█ ▐▀▀▄·     ▐█.▪ ▄█▀▄ ▐▀▀▪▄
              ▐█▌·▐█▌▐█.█▌     ▐█▌·▐█ ▪▐▌▐█.█▌     ▐█▌·▐█▌.▐▌▐█▄▄▌
              ▀▀▀ ▀▀▀·▀  ▀     ▀▀▀  ▀  ▀ ·▀  ▀     ▀▀▀  ▀█▄▀▪ ▀▀▀
-  start_game_incorrect: Please type p/play or s/set
-  play_again: Play again? (y/n)
-  play_again_incorrect: Please type y/yes or n/no
-  configuration: |
-                  Please choose grid size, your personal symbol, and how many
-                  concurrent symbols win.
-  grid_size: |
-              On what grid do you want to play?
-              Press '1' for 3x3
-              Press '2' for 5x5
-              Press '3' for 9x9
-  grid_size_incorrect: Please choose 1, 2, or 3
-  your_name: |
-              But first, what's your name?
+  setup_welcome: |
+                  ▄▄▄▄▄▪  ▄ •▄     ▄▄▄▄▄ ▄▄▄· ▄ •▄     ▄▄▄▄▄      ▄▄▄ .
+                  •██  ██ █▌▄▌▪    •██  ▐█ ▀█ █▌▄▌▪    •██  ▪     ▀▄.▀·
+                   ▐█.▪▐█·▐▀▀▄·     ▐█.▪▄█▀▀█ ▐▀▀▄·     ▐█.▪ ▄█▀▄ ▐▀▀▪▄
+                   ▐█▌·▐█▌▐█.█▌     ▐█▌·▐█ ▪▐▌▐█.█▌     ▐█▌·▐█▌.▐▌▐█▄▄▌
+                   ▀▀▀ ▀▀▀·▀  ▀     ▀▀▀  ▀  ▀ ·▀  ▀     ▀▀▀  ▀█▄▀▪ ▀▀▀
 
-  your_name_incorrect: Is this your name?
-  symbols: |
-            Please copy and paste any of the following, or type any one character you like
-            (X, ▒, ╬, #, █, ☺, ♥, ♛, ☃)
-  symbols_incorrect: You can only choose one character different then 'O'.
+                  Welcome to Game Configuratior
+  setup_prologue: |
+
+                  Please start with choosing single player, or multiplayer version
+  game_version: Type 'single' for single player, or 'mutli' for multiplayer
+  empty_response: Your name must contain at least one character
+  ask_name: What is your name?
+  player_one_name: Name of the first player?
+  player_two_name: Name of the second player?
+  ask_symbol: |
+              To use standrad symbols 'X' and 'O' press enter,
+              othervise copy any of the following symbol,
+              or type your own
+
+               ♠  ♥  ♣  ♦ ☰  █  ▓
+  incorrect_symbol: |
+                    The symbol can be only one character long.
+                    Please type again
+  board_size: |
+              You can choose from different board sizes,
+              type 3 - 9 to choose boards
+              (3x3, 4x4, 5x5, 6x6, 7x7, 8x8, or 9x9)
+  ask_subsequences: |
+                    You can choose how many subsequent symbols will win
+                    Minimum is 3, and maximum is size of your board
+  incorrect_subsequences: |
+                          Please make sure you choose minimum 3 and
+                          maximum of the size of your board
+  start_new_game: Thank you, press anything to play, and enjoy!
+
