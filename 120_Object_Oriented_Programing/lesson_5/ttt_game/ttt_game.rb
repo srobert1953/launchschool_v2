@@ -36,6 +36,12 @@ class Board
     @grid = create_grid(columns, rows)
   end
 
+  def active_markers
+    marekrs = grid.select { |_, square| square.marker != Square::INITIAL_MARKER }
+    markers = marekrs.map { |_, square| square.marker }
+    markers.uniq
+  end
+
   private
 
   def create_grid(x_columns, y_rows)
@@ -167,13 +173,23 @@ class Computer < Player
   private
 
   def choose_square(board)
+    player_marker = identify_player_marker(board)
     if middle_square(board).available?
       middle_square(board)
+    elsif computer_will_win?(board, player_marker)
+      puts "Computer will win"
+      # binding.pry
+      block_square(board, player_marker)
     elsif player_will_win?(board)
       block_square(board)
     else
       board.available_squares.sample
     end
+  end
+
+  def identify_player_marker(board)
+    marker = board.active_markers.reject { |m| m == marker }
+    marker.first
   end
 
   def middle_square(board)
@@ -183,21 +199,26 @@ class Computer < Player
   end
 
   def player_will_win?(board)
-    p player_squares = identify_possible_win_squares(board)
-    player_squares.size > 0
+    player_squares = identify_possible_win_squares(board)
+    !player_squares.empty?
   end
 
-  def identify_possible_win_squares(board)
+  def computer_will_win?(board, player_marker)
+    computer_squares = identify_possible_win_squares(board, for_marker = player_marker)
+    !computer_squares.empty?
+  end
+
+  def identify_possible_win_squares(board, for_marker = marker)
     subsequences_size = board.subsequences
     all_possible_moves = all_subsequences(directions(board), subsequences_size)
     all_possible_moves.select do |subsequence|
-      subsequence_can_win?(subsequence)
+      subsequence_can_win?(subsequence, for_marker)
     end
   end
 
-  def subsequence_can_win?(squares_array)
+  def subsequence_can_win?(squares_array, for_marker)
     squares = squares_array.select do |square|
-      return false if square.marker == self.marker
+      return false if square.marker == for_marker
       square.marker == Square::INITIAL_MARKER
     end
     squares.count == 1
@@ -313,8 +334,8 @@ class Computer < Player
     diagonals
   end
 
-  def block_square(board)
-    player_win_rows = identify_possible_win_squares(board)
+  def block_square(board, win_marker = marker)
+    player_win_rows = identify_possible_win_squares(board, win_marker)
     win_squares = player_win_rows.sample
     win_squares.select! { |square| square.marker == Square::INITIAL_MARKER }
     win_squares.first
@@ -430,7 +451,7 @@ class TTTGame
   end
 
   def game_screen
-    # clear_screen
+    clear_screen
     display_score
     display_grid
   end
