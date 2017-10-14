@@ -1,6 +1,5 @@
 # ttt_game.rb
 require 'yaml'
-require 'pry'
 
 class Board
   DIRECTIONS = [{ x: 0, y: 1 },
