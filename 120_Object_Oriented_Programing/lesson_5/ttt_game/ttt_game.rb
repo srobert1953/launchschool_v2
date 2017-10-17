@@ -250,6 +250,7 @@ class Computer < Player
         subsequences_from_directions << direction[separator, subsequences_size]
       end
     end
+    p subsequences_from_directions.count
     subsequences_from_directions
   end
 
@@ -507,7 +508,7 @@ class TTTGame
         current_player = players[idx]
         current_player.mark(board)
         current_player.update_score if board.winner?(current_player)
-        return if board.winner?(current_player) || board.full?
+        return nil if board.winner?(current_player) || board.full?
       end
     end
   end
