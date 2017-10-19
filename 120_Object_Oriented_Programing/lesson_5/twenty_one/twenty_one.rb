@@ -30,6 +30,10 @@ class Participant
     total
   end
 
+  def clear_hand
+    @cards = []
+  end
+
   def add(card)
     cards.push card
   end
@@ -145,11 +149,17 @@ class TwentyOne
 
   def play
     welcome_message
-    deal_cards
-    show_initial_cards
-    player_turn
-    dealer_turn
-    show_result
+    # initialize_players
+    loop do
+      reset_play
+      deal_cards
+      show_initial_cards
+      player_turn
+      dealer_turn
+      show_result
+      break unless play_again?
+    end
+    good_bye_message
   end
 
   private
@@ -161,6 +171,17 @@ class TwentyOne
   def welcome_message
     puts ""
     puts "Welcome to Twenty One Game!"
+  end
+
+  def good_bye_message
+    puts ''
+    puts "Thank you for playing Twenty One game!"
+  end
+
+  def reset_play
+    player.clear_hand
+    dealer.clear_hand
+    deck.shuffle_deck
   end
 
   def deal_cards
@@ -223,6 +244,11 @@ class TwentyOne
     else
       puts "It's a tie!"
     end
+  end
+
+  def play_again?
+    answer = ask_question('Do you want to play again?', ['yes', 'no'])
+    answer == :yes
   end
 
   def ask_question(question, answers)
