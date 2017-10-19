@@ -1,19 +1,33 @@
 # twenty_one.rb
 
+require 'pry'
+
 class Participant
+  MAXIMUM_HIT = 21
+
   attr_reader :cards
 
   def initialize
     @cards = []
   end
 
-  def hit
-  end
-
-  def stay
-  end
-
   def total
+    total = cards.map do |card|
+      case card.face
+      when (2..9) then card.face
+      when 'Ace' then 11
+      else
+        10
+      end
+    end
+    total = total.inject(&:+)
+
+    if cards.include?('Ace') && # => Adjust for Ace value
+       total > MAXIMUM_HIT
+      total -= 10
+    end
+
+    total
   end
 
   def add(card)
@@ -21,12 +35,29 @@ class Participant
   end
 
   def show_hand
-    hand = ''
+    hand = []
     cards.each do |card|
-      hand << card.to_s + ', '
+      hand << card.to_s
     end
-    hand
+    format(hand)
   end
+
+  def busted?
+    total > MAXIMUM_HIT
+  end
+
+  private
+
+  def format(cards_array)
+    result = if cards_array.count == 1
+      cards_array.first
+    else
+      cards_array[-1] = "and #{cards_array.last}"
+      cards_array.join(', ')
+    end
+    result
+  end
+
 end
 
 class Player < Participant
@@ -34,6 +65,7 @@ class Player < Participant
 end
 
 class Dealer < Participant
+  MINIMUM_HIT = 17
   def show_card
     cards.first.to_s
   end
@@ -112,14 +144,24 @@ class TwentyOne
   end
 
   def play
+    welcome_message
     deal_cards
     show_initial_cards
-    # player_turn
-    # dealer_turn
-    # show_result
+    player_turn
+    dealer_turn
+    show_result
   end
 
   private
+
+  def clear_screen
+    system('cls') || system('clear')
+  end
+
+  def welcome_message
+    puts ""
+    puts "Welcome to Twenty One Game!"
+  end
 
   def deal_cards
     2.times do
@@ -129,10 +171,86 @@ class TwentyOne
   end
 
   def show_initial_cards
+    clear_screen
     puts ""
-    puts "You have: #{player.show_hand}"
-    puts "Dealer has #{dealer.show_card}"
+    puts "You have #{player.show_hand}. Your total: #{player.total}"
+    puts "Dealer has #{dealer.show_card}, and an unknown card."
   end
+
+  def show_all_cards
+    clear_screen
+    puts ''
+    puts "You have #{player.show_hand}. Your total: #{player.total}"
+    puts "Dealer has #{dealer.show_hand}. Dealer's total: #{dealer.total}"
+  end
+
+  def player_turn
+    loop do
+      hit = ask_question("Do you want to 'hit' or 'stay'?", ['hit', 'stay'])
+      if hit == :hit
+        player.add(deck.deal_card)
+        show_initial_cards
+      else
+        break
+      end
+      break if player.busted?
+    end
+  end
+
+  def dealer_turn
+    puts ''
+    puts "Dealer is choosing cards."
+    loop do
+      unless dealer.busted? || dealer.total >= Dealer::MINIMUM_HIT
+        dealer.add(deck.deal_card)
+      else
+        break
+      end
+    end
+    show_all_cards
+  end
+
+  def show_result
+    puts ''
+    if !player.busted? && !dealer.busted? && dealer.total > player.total
+      puts "Dealer won!"
+    elsif !player.busted? && !dealer.busted? && player.total > dealer.total
+      puts "You won. Congratulations!"
+    elsif player.busted? && !dealer.busted?
+      puts "You're busted :(, Computer won!"
+    elsif dealer.busted? && !player.busted?
+      puts "Dealer's busted :), You won!"
+    else
+      puts "It's a tie!"
+    end
+  end
+
+  def ask_question(question, answers)
+    user_answer = nil
+    puts ''
+    puts question
+    loop do
+      prompt
+      user_answer = gets.chomp.downcase
+      if !user_answer.empty? &&
+         answers.any? { |choice| choice.start_with? user_answer }
+        break
+      end
+      puts ''
+      puts "Please choose one of the following: #{answers.join(', ')}"
+    end
+    convert_to_symbol(user_answer, answers)
+  end
+
+  def prompt
+    print "=> "
+  end
+
+  def convert_to_symbol(answer, choises)
+    value = choises.select { |possibility| possibility.start_with? answer }
+    :"#{value.first}"
+  end
+
 end
 
 TwentyOne.new.play
