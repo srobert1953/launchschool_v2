@@ -5,24 +5,20 @@ require 'pry'
 class Participant
   MAXIMUM_HIT = 21
 
-  attr_reader :cards
+  attr_reader :cards, :name
 
-  def initialize
+  def initialize(name)
     @cards = []
+    @name = name
   end
 
   def total
     total = cards.map do |card|
-      case card.face
-      when (2..9) then card.face
-      when 'Ace' then 11
-      else
-        10
-      end
+      value(card)
     end
     total = total.inject(&:+)
 
-    if cards.include?('Ace') && # => Adjust for Ace value
+    if cards.any?(&:ace?) && # => Adjust for Ace value
        total > MAXIMUM_HIT
       total -= 10
     end
@@ -38,6 +34,37 @@ class Participant
     cards.push card
   end
 
+  def busted?
+    total > MAXIMUM_HIT
+  end
+
+  def >(other)
+    total > other.total
+  end
+
+  def <(other)
+    total < other.total
+  end
+
+  def show_all_cards
+    puts ''
+    puts "#{name}'s hand:"
+    puts show_hand
+    puts ''
+  end
+
+  private
+
+  def value(card)
+    if card.ace?
+      11
+    elsif card.king? || card.queen? || card.jack?
+      10
+    else
+      card.face
+    end
+  end
+
   def show_hand
     hand = []
     cards.each do |card|
@@ -46,35 +73,53 @@ class Participant
     format(hand)
   end
 
-  def busted?
-    total > MAXIMUM_HIT
-  end
-
-  private
-
   def format(cards_array)
-    result = if cards_array.count == 1
-      cards_array.first
-    else
-      cards_array[-1] = "and #{cards_array.last}"
-      cards_array.join(', ')
+    result = ""
+    cards_array.each do |card|
+      result << card.to_s + "\n"
     end
     result
   end
-
 end
 
 class Player < Participant
 
+  def initialize
+    super(ask_name)
+  end
+
+  def ask_name
+    response = nil
+    loop do
+      puts "What is your name?"
+      response = gets.chomp.capitalize
+      break unless response.empty?
+      puts "Please type at least one character."
+    end
+    response
+  end
 end
 
 class Dealer < Participant
   MINIMUM_HIT = 17
+  NAMES = ['Han Solo', 'Spock', 'Sarah Connor', 'R2-D2']
+
+  def initialize
+    super(NAMES.sample)
+  end
+
+  def show_one_card
+    puts ''
+    puts "#{name}'s hand:"
+    puts show_card
+  end
+
+  private
+
   def show_card
-    cards.first.to_s
+    cards.first.to_s + "\nUnknown Card"
   end
 end
-
 
 class Deck
   attr_reader :cards
@@ -105,8 +150,10 @@ class Deck
 end
 
 class Card
-  SUITS = ['S', 'H', 'D', 'C']
-  VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+  SUITS = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
+  VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace']
+
+  attr_reader :suit, :face
 
   def initialize(suit, face)
     @suit = suit
@@ -117,25 +164,10 @@ class Card
     "#{face} of #{suit}"
   end
 
-  def face
-    case @face
-    when 11 then 'Jack'
-    when 12 then 'Queen'
-    when 13 then 'King'
-    when 14 then 'Ace'
-    else
-      @face
-    end
-  end
-
-  def suit
-    case @suit
-    when 'C' then '♣'
-    when 'H' then '♥'
-    when 'D' then '♦'
-    when 'S' then '♠'
-    end
-  end
+  def jack?;  face == 'Jack'; end
+  def queen?; face == 'Queen'; end
+  def king?;  face == 'King'; end
+  def ace?;   face == 'Ace'; end
 end
 
 class TwentyOne
@@ -143,13 +175,11 @@ class TwentyOne
 
   def initialize
     @deck = Deck.new
-    @player = Player.new
-    @dealer = Dealer.new
   end
 
   def play
     welcome_message
-    # initialize_players
+    initialize_players
     loop do
       reset_play
       deal_cards
@@ -164,18 +194,32 @@ class TwentyOne
 
   private
 
+  def initialize_players
+    @player = Player.new
+    @dealer = Dealer.new
+  end
+
   def clear_screen
     system('cls') || system('clear')
   end
 
   def welcome_message
-    puts ""
-    puts "Welcome to Twenty One Game!"
+    clear_screen
+    puts ''
+    puts 'Welcome to Twenty One Game!'
+    puts ''
+    puts 'Get as close to 21 as possible by hitting new cards'
+    puts 'Try not to go over 21, or you are busted!'
+    puts ''
+    puts 'To start, press anything'
+    gets
   end
 
   def good_bye_message
+    clear_screen
     puts ''
-    puts "Thank you for playing Twenty One game!"
+    puts 'Thank you for playing Twenty One game!'
+    puts ''
   end
 
   def reset_play
@@ -193,17 +237,24 @@ class TwentyOne
 
   def show_initial_cards
     clear_screen
-    puts ""
-    puts "You have #{player.show_hand}. Your total: #{player.total}"
-    puts "Dealer has #{dealer.show_card}, and an unknown card."
+    show_players_names
+    player.show_all_cards
+    puts "Your total is: #{player.total}"
+    dealer.show_one_card
   end
 
   def show_all_cards
     clear_screen
-    puts ''
-    puts "You have #{player.show_hand}. Your total: #{player.total}"
-    puts "Dealer has #{dealer.show_hand}. Dealer's total: #{dealer.total}"
+    player.show_all_cards
+    puts "Your total: #{player.total}"
+    dealer.show_all_cards
+    puts "#{dealer.name}'s total: #{dealer.total}"
   end
+
+    def show_players_names
+      puts ''
+      puts "You are playing against #{dealer.name}"
+    end
 
   def player_turn
     loop do
@@ -220,9 +271,11 @@ class TwentyOne
 
   def dealer_turn
     puts ''
-    puts "Dealer is choosing cards."
+    puts "#{dealer.name} is choosing cards."
+    sleep rand(1..2)
     loop do
-      unless dealer.busted? || dealer.total >= Dealer::MINIMUM_HIT
+      if !dealer.busted? &&
+         dealer.total < Dealer::MINIMUM_HIT
         dealer.add(deck.deal_card)
       else
         break
@@ -232,18 +285,36 @@ class TwentyOne
   end
 
   def show_result
+    dealer_name = dealer.name
+    player_name = player.name
     puts ''
-    if !player.busted? && !dealer.busted? && dealer.total > player.total
-      puts "Dealer won!"
-    elsif !player.busted? && !dealer.busted? && player.total > dealer.total
-      puts "You won. Congratulations!"
-    elsif player.busted? && !dealer.busted?
-      puts "You're busted :(, Computer won!"
-    elsif dealer.busted? && !player.busted?
-      puts "Dealer's busted :), You won!"
+    if dealer_won?
+      puts "#{dealer_name} won!"
+    elsif player_won?
+      puts "#{player_name}, you won. Congratulations!"
+    elsif player_busted?
+      puts "You're busted :( #{dealer_name} won!"
+    elsif dealer_busted?
+      puts "Dealer's busted :), #{player_name}, you won!"
     else
       puts "It's a tie!"
     end
+  end
+
+  def dealer_won?
+    !player.busted? && !dealer.busted? && dealer > player
+  end
+
+  def player_won?
+    !player.busted? && !dealer.busted? && player > dealer
+  end
+
+  def dealer_busted?
+    dealer.busted? && !player.busted?
+  end
+
+  def player_busted?
+    player.busted? && !dealer.busted?
   end
 
   def play_again?
@@ -276,7 +347,6 @@ class TwentyOne
     value = choises.select { |possibility| possibility.start_with? answer }
     :"#{value.first}"
   end
-
 end
 
 TwentyOne.new.play
