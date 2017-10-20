@@ -1,0 +1,23 @@
+welcome: |
+
+          Welcome to Twenty One Game!
+
+          Get as close to 21 as possible by hitting new cards
+          Try not to go over 21, or you are busted!
+
+          To start, press anything
+good_bye: Thank you for playing Twenty One game!
+your_name: What is your name?
+wrong_name: Please type at least one character
+player_total: "Your total is: %{total}"
+dealer_total: "%{name}'s total is: %{total}"
+oponent_name: "You are playing against %{name}"
+hit_or_stay: Do you want to 'hit' or 'stay'?
+dealer_turn: "%{name} is choosing card"
+dealer_won: "%{name} won!"
+player_won:  "%{name}, you won. Congratulations!"
+player_busted: "You're busted :( %{name} won!"
+dealer_busted: "Dealer's busted :), #{name}, you won!"
+tie: It's a tie!
+play_again: Do you want to play again?
+wrong_answer: "Please choose one of the following: %{answers}"

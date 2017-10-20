@@ -1,6 +1,8 @@
 # twenty_one.rb
 
-require 'pry'
+require 'yaml'
+
+MESSAGES = YAML.load_file('twenty_one_messages.yml')
 
 class Participant
   MAXIMUM_HIT = 21
@@ -83,7 +85,6 @@ class Participant
 end
 
 class Player < Participant
-
   def initialize
     super(ask_name)
   end
@@ -91,10 +92,10 @@ class Player < Participant
   def ask_name
     response = nil
     loop do
-      puts "What is your name?"
+      puts MESSAGES['your_name']
       response = gets.chomp.capitalize
       break unless response.empty?
-      puts "Please type at least one character."
+      puts MESSAGES['wrong_name']
     end
     response
   end
@@ -205,20 +206,13 @@ class TwentyOne
 
   def welcome_message
     clear_screen
-    puts ''
-    puts 'Welcome to Twenty One Game!'
-    puts ''
-    puts 'Get as close to 21 as possible by hitting new cards'
-    puts 'Try not to go over 21, or you are busted!'
-    puts ''
-    puts 'To start, press anything'
+    puts MESSAGES['welcome']
     gets
   end
 
   def good_bye_message
     clear_screen
-    puts ''
-    puts 'Thank you for playing Twenty One game!'
+    puts MESSAGES['good_bye']
     puts ''
   end
 
@@ -239,26 +233,26 @@ class TwentyOne
     clear_screen
     show_players_names
     player.show_all_cards
-    puts "Your total is: #{player.total}"
+    puts MESSAGES['player_total'] % { total: player.total }
     dealer.show_one_card
   end
 
   def show_all_cards
     clear_screen
     player.show_all_cards
-    puts "Your total: #{player.total}"
+    puts MESSAGES['player_total'] % { total: player.total }
     dealer.show_all_cards
-    puts "#{dealer.name}'s total: #{dealer.total}"
+    puts MESSAGES['dealer_total'] % { name: dealer.name, total: dealer.total }
   end
 
-    def show_players_names
-      puts ''
-      puts "You are playing against #{dealer.name}"
-    end
+  def show_players_names
+    puts ''
+    puts MESSAGES['oponent_name'] % { name: dealer.name }
+  end
 
   def player_turn
     loop do
-      hit = ask_question("Do you want to 'hit' or 'stay'?", ['hit', 'stay'])
+      hit = ask_question(MESSAGES['hit_or_stay'], ['hit', 'stay'])
       if hit == :hit
         player.add(deck.deal_card)
         show_initial_cards
@@ -270,9 +264,7 @@ class TwentyOne
   end
 
   def dealer_turn
-    puts ''
-    puts "#{dealer.name} is choosing cards."
-    sleep rand(1..2)
+    notify_dealer_turn
     loop do
       if !dealer.busted? &&
          dealer.total < Dealer::MINIMUM_HIT
@@ -284,20 +276,32 @@ class TwentyOne
     show_all_cards
   end
 
-  def show_result
-    dealer_name = dealer.name
-    player_name = player.name
+  def notify_dealer_turn
     puts ''
-    if dealer_won?
-      puts "#{dealer_name} won!"
-    elsif player_won?
-      puts "#{player_name}, you won. Congratulations!"
-    elsif player_busted?
-      puts "You're busted :( #{dealer_name} won!"
-    elsif dealer_busted?
-      puts "Dealer's busted :), #{player_name}, you won!"
+    puts MESSAGES['dealer_turn'] % { name: dealer.name }
+    sleep rand(1..2)
+  end
+
+  def show_result
+    puts ''
+    show(winner)
+  end
+
+  def winner
+    if dealer_won? || player_busted?
+      dealer
+    elsif player_won? || dealer_busted?
+      player
+    end
+  end
+
+  def show(winner)
+    if winner.class == Dealer
+      puts MESSAGES['dealer_won'] % { name: winner.name }
+    elsif winner.class == Player
+      puts MESSAGES['player_won'] % { name: winner.name }
     else
-      puts "It's a tie!"
+      puts MESSAGES['tie']
     end
   end
 
@@ -318,7 +322,7 @@ class TwentyOne
   end
 
   def play_again?
-    answer = ask_question('Do you want to play again?', ['yes', 'no'])
+    answer = ask_question(MESSAGES['play_again'], ['yes', 'no'])
     answer == :yes
   end
 
@@ -334,7 +338,7 @@ class TwentyOne
         break
       end
       puts ''
-      puts "Please choose one of the following: #{answers.join(', ')}"
+      puts MESSAGES['wrong_answer'] % { answers: answers.join(', ') }
     end
     convert_to_symbol(user_answer, answers)
   end
