@@ -50,9 +50,10 @@ class Participant
 
   def show_all_cards
     puts ''
-    puts "#{name}'s hand:"
+    puts "--- #{name}'s hand ---"
     puts show_hand
     puts ''
+    puts MESSAGES['player_total'] % { name: name, total: total }
   end
 
   private
@@ -89,6 +90,8 @@ class Player < Participant
     super(ask_name)
   end
 
+  private
+
   def ask_name
     response = nil
     loop do
@@ -111,7 +114,7 @@ class Dealer < Participant
 
   def show_one_card
     puts ''
-    puts "#{name}'s hand:"
+    puts "--- #{name}'s hand ---"
     puts show_card
   end
 
@@ -233,16 +236,13 @@ class TwentyOne
     clear_screen
     show_players_names
     player.show_all_cards
-    puts MESSAGES['player_total'] % { total: player.total }
     dealer.show_one_card
   end
 
   def show_all_cards
     clear_screen
     player.show_all_cards
-    puts MESSAGES['player_total'] % { total: player.total }
     dealer.show_all_cards
-    puts MESSAGES['dealer_total'] % { name: dealer.name, total: dealer.total }
   end
 
   def show_players_names
