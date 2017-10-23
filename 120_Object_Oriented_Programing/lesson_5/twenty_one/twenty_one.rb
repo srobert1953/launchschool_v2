@@ -32,7 +32,7 @@ class Participant
     @cards = []
   end
 
-  def add(card)
+  def add_card(card)
     cards.push card
   end
 
@@ -97,7 +97,7 @@ class Player < Participant
     loop do
       puts MESSAGES['your_name']
       response = gets.chomp.capitalize
-      break unless response.empty?
+      break unless response.empty? || response == ' '
       puts MESSAGES['wrong_name']
     end
     response
@@ -189,7 +189,7 @@ class TwentyOne
       deal_cards
       show_initial_cards
       player_turn
-      dealer_turn
+      dealer_turn unless player.busted?
       show_result
       break unless play_again?
     end
@@ -227,8 +227,8 @@ class TwentyOne
 
   def deal_cards
     2.times do
-      player.add(deck.deal_card)
-      dealer.add(deck.deal_card)
+      player.add_card(deck.deal_card)
+      dealer.add_card(deck.deal_card)
     end
   end
 
@@ -253,12 +253,9 @@ class TwentyOne
   def player_turn
     loop do
       hit = ask_question(MESSAGES['hit_or_stay'], ['hit', 'stay'])
-      if hit == :hit
-        player.add(deck.deal_card)
-        show_initial_cards
-      else
-        break
-      end
+      return unless hit == :hit
+      player.add_card(deck.deal_card)
+      show_initial_cards
       break if player.busted?
     end
   end
@@ -266,14 +263,9 @@ class TwentyOne
   def dealer_turn
     notify_dealer_turn
     loop do
-      if !dealer.busted? &&
-         dealer.total < Dealer::MINIMUM_HIT
-        dealer.add(deck.deal_card)
-      else
-        break
-      end
+      break if dealer.busted? || dealer.total >= Dealer::MINIMUM_HIT
+      dealer.add_card(deck.deal_card)
     end
-    show_all_cards
   end
 
   def notify_dealer_turn
@@ -283,6 +275,7 @@ class TwentyOne
   end
 
   def show_result
+    show_all_cards
     puts ''
     show(winner)
   end
@@ -297,12 +290,17 @@ class TwentyOne
 
   def show(winner)
     if winner.class == Dealer
-      puts MESSAGES['dealer_won'] % { name: winner.name }
+      message_dealer_won
     elsif winner.class == Player
       puts MESSAGES['player_won'] % { name: winner.name }
     else
       puts MESSAGES['tie']
     end
+  end
+
+  def message_dealer_won
+    puts MESSAGES['player_busted'] if player.busted?
+    puts MESSAGES['dealer_won'] % { name: winner.name }
   end
 
   def dealer_won?
