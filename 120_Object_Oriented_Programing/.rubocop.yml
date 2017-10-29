@@ -1,4 +1,4 @@
-# .rubocop.yml for 101 Lessons 6 (13 Mar 2017)
+# .rubocop.yml for non-101 courses (13 Mar 2017)
 
 AllCops:
   # Display cop names
@@ -66,7 +66,8 @@ Style/FrozenStringLiteralComment:
 
 Style/GuardClause:
   Description: Check for conditionals that can be replaced with guard clauses.
-  Enabled: false
+  Enabled: true
+  MinBodyLength: 1
 
 Style/HashSyntax:
   Description: >-
@@ -89,7 +90,7 @@ Style/InlineComment:
 
 Style/MethodCallParentheses:
   Description: Do not use parentheses for method calls with no arguments.
-  Enabled: true
+  Enabled: false
 
 Style/ModuleFunction:
   Description: Checks for usage of `extend self` in modules.
@@ -178,7 +179,7 @@ Style/SafeNavigation:
                   This cop transforms usages of a method call safeguarded by
                   a check for the existance of the object to
                   safe navigation (`&.`).
-  Enabled: false
+  Enabled: true
 
 Style/SingleLineBlockParams:
   Description: Enforces the names of some block params.
@@ -217,7 +218,8 @@ Metrics/AbcSize:
 
 Metrics/BlockLength:
   Description: Limit size of blocks.
-  Enabled: false
+  Enabled: true
+  Max: 20
 
 Metrics/ClassLength:
   Description: 'Avoid classes longer than 100 lines of code.'
