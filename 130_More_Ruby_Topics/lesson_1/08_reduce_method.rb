@@ -1,6 +1,6 @@
-def reduce(arr, acum = 0)
+def reduce(arr, default = 0)
   counter = 0
-  acumulator = acum
+  acumulator = default
 
   while counter < arr.size
     acumulator = yield(acumulator, arr[counter])
