@@ -28,7 +28,6 @@ end
 
 class TodoList
   attr_accessor :title
-  attr_reader :todos
 
   def initialize(title)
     @title = title
@@ -86,12 +85,22 @@ class TodoList
     todos.each { |item| item.done! }
   end
 
+  def each
+    todos.each do |item|
+      yield(item)
+    end
+  end
+
   def to_s
     print_str = "--- #{title} ---\n"
     todos.each { |item| print_str += "#{item}\n" }
 
     print_str
   end
+
+  private
+
+  attr_reader :todos
 end
 
 
@@ -100,14 +109,11 @@ end
 task1 = Todo.new('Go to store')
 task2 = Todo.new('Buy Milk')
 task3 = Todo.new('Pay groceries')
-list1 = TodoList.new('Shopping list')
+list = TodoList.new('Shopping list')
 
-list1.add(task1)
-list1.add(task2)
-list1.add(task3)
-puts list1
-list1.mark_done_at(1)
-puts list1
+list.add(task1)
+list.add(task2)
+list.add(task3)
+list.each { |item| puts item }
 
-list1.done!
-puts list1
+
