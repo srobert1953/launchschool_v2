@@ -89,6 +89,17 @@ class TodoList
     todos.each do |item|
       yield(item)
     end
+    self
+  end
+
+  def select
+    result = TodoList.new(title)
+
+    each do |item|
+      result.add(item) if yield(item)
+    end
+
+    result
   end
 
   def to_s
@@ -114,6 +125,13 @@ list = TodoList.new('Shopping list')
 list.add(task1)
 list.add(task2)
 list.add(task3)
+
+task2.done!
 list.each { |item| puts item }
+
+puts  ''
+result = list.select { |item| item.done? }
+puts result
+
 
 
