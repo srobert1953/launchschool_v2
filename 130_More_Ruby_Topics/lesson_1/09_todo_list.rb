@@ -109,6 +109,30 @@ class TodoList
     print_str
   end
 
+  def find_by_title(title)
+    select { |item| item.title == title }.first
+  end
+
+  def all_done
+    select { |item| item.done? }
+  end
+
+  def all_not_done
+    select { |item| !item.done? }
+  end
+
+  def mark_done(title)
+    find_by_title(title) && find_by_title(title).done!
+  end
+
+  def mark_all_done
+    each { |item| item.done! }
+  end
+
+  def mark_all_undone
+    each { |item| item.undone! }
+  end
+
   private
 
   attr_reader :todos
@@ -127,11 +151,27 @@ list.add(task2)
 list.add(task3)
 
 task2.done!
-list.each { |item| puts item }
 
-puts  ''
 result = list.select { |item| item.done? }
 puts result
 
+puts ''
+result = list.find_by_title('Something')
+p result
 
+puts  ''
+puts list.all_done
+
+puts  ''
+puts list.all_not_done
+
+puts ''
+list.mark_done('Pay groceries')
+puts list
+
+puts ''
+puts list.mark_all_done
+
+puts ''
+puts list.mark_all_undone
 
