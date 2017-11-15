@@ -1,8 +1,7 @@
 # car_test.rb
-
 require 'minitest/autorun'
 require 'minitest/reporters'
-MiniTest::Reporters.use!
+Minitest::Reporters.use!
 
 require_relative 'car'
 
@@ -13,7 +12,7 @@ class CarTest < MiniTest::Test
   end
 
   def test_bad_wheels
-    skip("Will be tested later")
+    skip "Will be tested later"
     car = Car.new
     assert_equal(3, car.wheels)
   end
