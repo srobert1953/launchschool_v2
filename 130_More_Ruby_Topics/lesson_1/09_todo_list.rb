@@ -74,6 +74,7 @@ class TodoList
   end
 
   def remove_at(idx)
+    raise IndexError, "Index out of boundaries" unless (0...todos.size).include?(idx)
     todos.delete_at(idx)
   end
 
@@ -103,10 +104,14 @@ class TodoList
   end
 
   def to_s
-    print_str = "--- #{title} ---\n"
-    todos.each { |item| print_str += "#{item}\n" }
+    print_str = "--- #{title} ---"
+    todos.each { |item| print_str += "\n#{item}" }
 
     print_str
+  end
+
+  def to_a
+    todos
   end
 
   def find_by_title(title)
@@ -133,7 +138,12 @@ class TodoList
     each { |item| item.undone! }
   end
 
-  private
+  def ==(other)
+    other.is_a?(TodoList) && todos == other.todos
+
+  end
+
+  protected
 
   attr_reader :todos
 end
@@ -141,37 +151,37 @@ end
 
 
 
-task1 = Todo.new('Go to store')
-task2 = Todo.new('Buy Milk')
-task3 = Todo.new('Pay groceries')
-list = TodoList.new('Shopping list')
+# task1 = Todo.new('Go to store')
+# task2 = Todo.new('Buy Milk')
+# task3 = Todo.new('Pay groceries')
+# list = TodoList.new('Shopping list')
 
-list.add(task1)
-list.add(task2)
-list.add(task3)
+# list.add(task1)
+# list.add(task2)
+# list.add(task3)
 
-task2.done!
+# task2.done!
 
-result = list.select { |item| item.done? }
-puts result
+# result = list.select { |item| item.done? }
+# puts result
 
-puts ''
-result = list.find_by_title('Something')
-p result
+# puts ''
+# result = list.find_by_title('Something')
+# p result
 
-puts  ''
-puts list.all_done
+# puts  ''
+# puts list.all_done
 
-puts  ''
-puts list.all_not_done
+# puts  ''
+# puts list.all_not_done
 
-puts ''
-list.mark_done('Pay groceries')
-puts list
+# puts ''
+# list.mark_done('Pay groceries')
+# puts list
 
-puts ''
-puts list.mark_all_done
+# puts ''
+# puts list.mark_all_done
 
-puts ''
-puts list.mark_all_undone
+# puts ''
+# puts list.mark_all_undone
 
