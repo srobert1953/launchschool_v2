@@ -18,4 +18,11 @@ class TestDesipher < MiniTest::Test
     decipher = @decipher.deciphers_list(@list).first
     assert_equal(encrypted, decipher)
   end
+
+  def test_fift_encripted_item
+    encrypted = "Abdullah Muhammad bin Musa al-Khwarizmi"
+    decipher = @decipher.deciphers_list(@list)[5]
+
+    assert_equal(encrypted, decipher)
+  end
 end
