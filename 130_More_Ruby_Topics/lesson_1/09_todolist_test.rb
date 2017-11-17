@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require 'minitest/autorun'
 require 'minitest/reporters'
 Minitest::Reporters.use!
@@ -174,6 +177,21 @@ class TodolistTest < MiniTest::Test
     new_list << @todo1
 
     assert_equal(selected_list, new_list)
+  end
+
+  def test_equal_lists
+    new_list = TodoList.new("Today's Todos")
+    new_list << @todo1
+    new_list << @todo2
+    new_list << @todo3
+
+    assert_equal(new_list, @list)
+  end
+
+  def test_find_by_title
+    todo = @list.find_by_title('Clean room')
+
+    assert_equal(todo, @todo2)
   end
 
 end
