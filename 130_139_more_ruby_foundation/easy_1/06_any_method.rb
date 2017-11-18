@@ -1,6 +1,6 @@
 class MyClass
-  def any?(arr)
-    arr.each do |num|
+  def any?(collection)
+    collection.each do |num|
       return true if yield(num)
     end
 

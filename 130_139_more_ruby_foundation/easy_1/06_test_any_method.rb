@@ -46,4 +46,10 @@ class TestMyClass < MiniTest::Test
     result = @my_class.any?(arr) { |num| true }
     assert_equal(false, result)
   end
+
+  def test_any_with_hash
+    hash = { name: 'Robert', age: 31}
+    result = @my_class.any?(hash) { |key, value| value == 31 }
+    assert_equal(true, result)
+  end
 end
