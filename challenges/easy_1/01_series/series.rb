@@ -1,17 +1,17 @@
 class Series
   def initialize(series_string)
-    @series = series_string
+    @series = series_string.chars.map(&:to_i)
   end
 
   def slices(number)
-    max_slices = @series.size - number + 1
-    raise ArgumentError, "Incorrect slicing number entered" if max_slices <= 0
+    raise ArgumentError, "Incorrect slicing number entered" if number > @series.size
+    @series.each_cons(number).to_a
 
-    result = []
-    max_slices.times do |idx|
-      result << @series.slice(idx, number).split('').map(&:to_i)
-    end
-
-    result
+    # => Original solution
+    # result = []
+    # max_slices.times do |idx|
+    #   result << @series.slice(idx, number)
+    # end
+    # result
   end
 end
