@@ -8,6 +8,7 @@ class Series
     @series.each_cons(number).to_a
 
     # => Original solution
+    # max_slices = @series.size - number + 1
     # result = []
     # max_slices.times do |idx|
     #   result << @series.slice(idx, number)
