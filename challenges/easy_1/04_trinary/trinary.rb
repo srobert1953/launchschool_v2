@@ -6,11 +6,10 @@ class Trinary
   end
 
   def to_decimal
-    decimal = 0
     @trinary.reverse
             .each_char
-            .with_index { |num, idx| decimal += num.to_i * BASE ** idx }
-    decimal
+            .with_index
+            .reduce(0) { |sum, (num, idx)| sum += num.to_i * BASE ** idx }
   end
 
   def trinary?(string)
