@@ -1,3 +1,4 @@
+# trinary.rb
 class Trinary
   BASE = 3
 
@@ -9,6 +10,6 @@ class Trinary
     @trinary.reverse
             .each_char
             .with_index
-            .reduce(0) { |sum, (num, idx)| sum += num.to_i * BASE ** idx }
+            .reduce(0) { |sum, (num, idx)| sum + (num.to_i * BASE**idx) }
   end
 end
