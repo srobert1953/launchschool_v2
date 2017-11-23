@@ -1,8 +1,8 @@
 class Trinary
   BASE = 3
 
-  def initialize(trinary_string)
-    @trinary = trinary?(trinary_string) ? trinary_string : '0'
+  def initialize(string)
+    @trinary = string =~ /(\D|[3-9])/ ? '0' : string
   end
 
   def to_decimal
@@ -10,9 +10,5 @@ class Trinary
             .each_char
             .with_index
             .reduce(0) { |sum, (num, idx)| sum += num.to_i * BASE ** idx }
-  end
-
-  def trinary?(string)
-    !(string =~ /(\D|[3-9])/)
   end
 end
