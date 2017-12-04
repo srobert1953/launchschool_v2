@@ -1,7 +1,7 @@
 # luhn_algorithm.rb
 class Luhn
   def initialize(number)
-    @number = number
+    @number = number.to_s.chars.map(&:to_i)
   end
 
   def self.create(number)
@@ -20,15 +20,10 @@ class Luhn
   end
 
   def addends
-    split_numbers = @number.to_s.chars.map(&:to_i)
-
-    counter = -2
-    until split_numbers[counter].nil?
-      split_numbers[counter] = double_number(split_numbers[counter])
-      counter -= 2
+    luhn_number = @number.reverse.map.with_index do |number, idx|
+      idx.odd? ? double_number(number) : number
     end
-
-    split_numbers
+    luhn_number.reverse!
   end
 
   def checksum
