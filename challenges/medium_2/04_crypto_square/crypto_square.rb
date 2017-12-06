@@ -10,26 +10,11 @@ class Crypto
   end
 
   def size
-    text_size = normalize_plaintext.size
-
-    if perfect_square?(text_size)
-      Math.sqrt(text_size)
-    else
-      Math.sqrt(text_size).to_i + 1
-    end
+    Math.sqrt(normalize_plaintext.size).ceil
   end
 
   def plaintext_segments
-    split_size = size
-    result = []
-    counter = 0
-
-    while counter < @normalize_message.size
-      result << @normalize_message[counter, split_size].join('')
-      counter += split_size
-    end
-
-    result
+    normalize_plaintext.scan(/.{1,#{size}}/)
   end
 
   def ciphertext
@@ -54,11 +39,5 @@ class Crypto
     end
 
     result.join(' ')
-  end
-
-  private
-
-  def perfect_square?(length)
-    Math.sqrt(length) % Math.sqrt(length).to_i == 0
   end
 end
