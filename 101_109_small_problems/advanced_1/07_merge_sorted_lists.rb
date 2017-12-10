@@ -1,24 +1,37 @@
 # merge_sorted_lists.rb
-
-=begin
-input: two sorted arrays
-output: new array
-  merge sorted array of the input arrays
-
-I cannot merge the arrays and then sort it.
-
-define method merge with two parameters
-compare which array's size is biggest
-  assign the biggest array to variable biggest_array
-?????
-
-
-=end
-
-
 def merge(arr1, arr2)
-  new = arr1 + arr2
-  new.min(new.size)
+  result = []
+  counter = 0
+
+  loop do
+    break if append_result!(result, arr1, arr2, counter)
+    break if arr1[counter].nil? && arr2[counter].nil?
+
+    reorder_array!(result, arr1[counter])
+    reorder_array!(result, arr2[counter])
+
+    counter += 1
+  end
+
+  result
+end
+
+def reorder_array!(result, number)
+  if !result.empty? && result.last > number
+    temp = result.last
+    result[-1] = number
+    result.push(temp)
+  else
+    result << number
+  end
+end
+
+def append_result!(result, arr1, arr2, idx)
+  if arr1[idx].nil?
+    result.concat(arr2[idx..-1]) unless arr2[idx].nil?
+  elsif arr2[idx].nil?
+    result.concat(arr1[idx..-1]) unless arr1[idx].nil?
+  end
 end
 
 p merge([1, 5, 9], [2, 6, 8]) == [1, 2, 5, 6, 8, 9]
