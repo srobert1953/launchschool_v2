@@ -14,6 +14,7 @@ class TestDivision < MiniTest::Test
     resutl4 = @my_class.divisors(98)
     result5 = @my_class.divisors(99400891)
     result6 = @my_class.divisors(36)
+    result7 = @my_class.divisors(999_962_000_357)
 
     assert_equal([1], result1)
     assert_equal([1, 7], result2)
@@ -21,6 +22,7 @@ class TestDivision < MiniTest::Test
     assert_equal([1, 2 ,7, 14, 49, 98], resutl4)
     assert_equal([1, 9967, 9973, 99400891], result5)
     assert_equal([1, 2, 3, 4, 6, 9, 12, 18, 36], result6)
+    assert_equal([1, 999_979, 999_983, 999_962_000_357], result7)
   end
 
   def test_no_integer_given

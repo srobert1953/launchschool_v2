@@ -5,7 +5,7 @@ class Division
     raise NoInteger, "Integer not given" unless number.is_a? Integer
 
     result = []
-    sqrt_number = Math::sqrt(number)
+    sqrt_number = Math.sqrt(number)
     1.upto(sqrt_number) do |divisor|
       if number % divisor == 0
         result << divisor
