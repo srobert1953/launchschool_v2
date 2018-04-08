@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @page_title %></title>
+</head>
+<body>
+  <% if session[:error] %>
+    <%= session.delete :error %>
+  <% end %>
+
+  <% if session[:success] %>
+    <%= session.delete :success %>
+  <% end %>
+
+  <%= yield %>
+</body>
+</html>

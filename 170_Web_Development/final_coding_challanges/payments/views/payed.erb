@@ -1,0 +1,24 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Created</th>
+      <th>Card Number</th>
+      <th>Expiration Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% session[:payments].each do |payment| %>
+    <tr>
+      <td><%= payment[:first_name] %> <%= payment[:last_name] %></td>
+      <td><%= payment[:submitted] %></td>
+      <td><%= format_card(payment[:card_num]) %></td>
+      <td><%= payment[:expiration] %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<a href="/payments/create">New Payment</a>
+<br>
+<a href="/">New User</a>

@@ -1,0 +1,32 @@
+<form action="/payments/create" method="POST">
+  <p>
+    <label>First name:
+      <input name="first_name" type="text" value="<%= @first_name %>"/>
+    </label>
+  </p>
+  <p>
+    <label>Last name:
+      <input name="last_name" type="text" value="<%= @last_name %>"/>
+    </label>
+  </p>
+  <p>
+    <label>Card number:
+      <input name="card_num" type="text" value="<%= @card_num %>"/>
+    </label>
+  </p>
+  <p>
+    <label>Expiration Date:
+      <input name="expiration" type="text" value="<%= @expiration %>"/>
+    </label>
+  </p>
+  <p>
+    <label>CCV:
+      <input name="ccv" type="text" value="<%= @ccv %>"/>
+    </label>
+  </p>
+  <button type="submit">Submit</button>
+</form>
+
+<a href="/payed">My Payments</a>
+<br>
+<a href="/">New User</a>
