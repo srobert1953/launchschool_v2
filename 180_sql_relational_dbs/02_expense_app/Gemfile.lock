@@ -1,0 +1,16 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    pg (1.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  pg (~> 1.0)
+
+RUBY VERSION
+   ruby 2.4.0p0
+
+BUNDLED WITH
+   1.16.1
