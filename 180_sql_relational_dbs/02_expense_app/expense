@@ -40,7 +40,8 @@ def add_expense
   end
 
   today = Date.today
-  CONNECTION.exec "INSERT INTO expenses (amount, memo, created_on) VALUES (#{amount}, '#{memo}', '#{today}')"
+  CONNECTION.exec("INSERT INTO expenses (amount, memo, created_on) 
+                   VALUES ($1, $2, $3)", [amount, memo, today])
 end
 
 case ARGV.first
