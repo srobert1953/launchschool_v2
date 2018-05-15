@@ -1,6 +1,7 @@
 # expense_data.rb
 
 require 'pg'
+require 'IO/console'
 
 class ExpenseData
   def initialize
@@ -39,9 +40,32 @@ class ExpenseData
     display_expenses result
   end
 
+  def delete_expense(expense_id)
+    sql_select = "SELECT * FROM expenses WHERE id = $1"
+    result = @connection.exec_params(sql_select, [expense_id])
+
+    if result.ntuples == 1
+      sql_delete = "DELETE FROM expenses WHERE id = $1"
+      @connection.exec_params(sql_delete, [expense_id])
+
+      puts "The following expense was deleted"
+      display_expenses result
+    else
+      puts "There is no expense with id #{expense_id}"
+    end    
+  end
+
+  def delete_all_expenses
+    puts "This will remove all expenses, are you sure? (y/n)"
+    answer = IO.new(1).getch
+    
+    @connection.exec("DELETE FROM expenses") if answer == 'y'
+  end
+
   private 
 
   def display_expenses(expenses)
+    puts "There are #{expenses.ntuples} expenses"
     expenses.each do |tuple|
       row = [ tuple['id'].rjust(3),
               tuple['created_on'].rjust(10),
@@ -49,5 +73,8 @@ class ExpenseData
               tuple['memo'] ]
       puts row.join(" | ")
     end
+    puts '-' * 50
+    total_amount = expenses.map { |tuple| tuple['amount'].to_f }.inject(&:+)
+    puts "Total".ljust(15) + total_amount.to_s.rjust(16)
   end
 end

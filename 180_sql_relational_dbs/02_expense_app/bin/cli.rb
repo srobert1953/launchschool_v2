@@ -20,6 +20,12 @@ class CLI
       term = args[1]
       abort "Please provide a search term" unless term
       @data.search_expense(term)
+    when 'delete'
+      expense_id = args[1]
+      abort "Please provide an expense id" unless expense_id
+      @data.delete_expense(expense_id)
+    when 'clear'
+      @data.delete_all_expenses
     else
       @data.display_help
     end
