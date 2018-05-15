@@ -6,6 +6,7 @@ require 'IO/console'
 class ExpenseData
   def initialize
     @connection = PG::Connection.new(dbname: 'expenses')
+    setup_schema
   end
 
   def display_help
@@ -65,6 +66,14 @@ class ExpenseData
   private 
 
   def display_expenses(expenses)
+    if expenses.ntuples > 0
+      display_expenses_format(expenses)
+    else
+      puts 'There are no expenses'
+    end
+  end
+
+  def display_expenses_format(expenses)
     puts "There are #{expenses.ntuples} expenses"
     expenses.each do |tuple|
       row = [ tuple['id'].rjust(3),
@@ -74,7 +83,30 @@ class ExpenseData
       puts row.join(" | ")
     end
     puts '-' * 50
-    total_amount = expenses.map { |tuple| tuple['amount'].to_f }.inject(&:+)
+    total_amount = count_expenses_amount(expenses)
     puts "Total".ljust(15) + total_amount.to_s.rjust(16)
+  end
+
+  def count_expenses_amount(expenses)
+    expenses.map { |tuple| tuple['amount'].to_f }.inject(&:+)
+  end
+
+  def setup_schema
+    sql = "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'expenses';"
+    result = @connection.exec(sql)
+
+    create_expenses_table unless result.field_values('count').first == "1"
+  end
+
+  def create_expenses_table
+    @connection.exec <<~SQL
+      CREATE TABLE expenses (
+        id serial PRIMARY KEY,
+        amount decimal(6,2) NOT NULL,
+        memo text NOT NULL,
+        created_on date NOT NULL DEFAULT NOW(),
+        CHECK (amount >= 0.0)
+      );
+    SQL
   end
 end
