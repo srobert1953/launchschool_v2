@@ -22,13 +22,10 @@ class DatabasePersistence
        GROUP BY lists.name, lists.id
        ORDER BY lists.name;
     SQL
+
     result = query(sql, id)
     tuple = result.first
-    { id: tuple["id"].to_i, 
-      name: tuple["name"], 
-      todos: find_todos_for_list(id),
-      todos_count: tuple["todos_count"].to_i,
-      todos_remaining_count: tuple["todos_remaining_count"].to_i }
+    tuple_to_list_hash(tuple)
   end
 
   def all_lists
@@ -45,10 +42,7 @@ class DatabasePersistence
 
     result = query(sql)
     result.map do |tuple|
-      { id: tuple["id"].to_i, 
-        name: tuple["name"], 
-        todos_count: tuple["todos_count"].to_i,
-        todos_remaining_count: tuple["todos_remaining_count"].to_i }
+      tuple_to_list_hash(tuple)
     end
   end
 
@@ -95,13 +89,6 @@ class DatabasePersistence
     @db.close
   end
 
-  private
-
-  def query(statement, *params)
-    @logger.info "#{statement}; #{params}"
-    @db.exec_params(statement, params)
-  end
-
   def find_todos_for_list(id)
     sql = "SELECT id, name, completed FROM todos WHERE list_id = $1;"
     result = query(sql, id)
@@ -110,5 +97,19 @@ class DatabasePersistence
         name: tuple["name"], 
         completed: tuple["completed"] == 't' }
     end
+  end
+
+  private
+
+  def query(statement, *params)
+    @logger.info "#{statement}; #{params}"
+    @db.exec_params(statement, params)
+  end
+
+  def tuple_to_list_hash(tuple)
+    { id: tuple["id"].to_i, 
+      name: tuple["name"], 
+      todos_count: tuple["todos_count"].to_i,
+      todos_remaining_count: tuple["todos_remaining_count"].to_i }
   end
 end

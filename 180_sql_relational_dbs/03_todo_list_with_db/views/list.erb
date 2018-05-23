@@ -13,7 +13,7 @@
   </header>
 
   <ul>
-    <% sort_todos(@list[:todos]) do |todo| %>
+    <% sort_todos(@todos) do |todo| %>
       <% if todo[:completed] %>
         <li class="complete">
       <% else %>
